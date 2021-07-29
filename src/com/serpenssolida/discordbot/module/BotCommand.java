@@ -17,13 +17,7 @@ public class BotCommand
 		this.id = id;
 		this.subcommand = new SubcommandData(this.id, description);
 		this.action = (event, guild, channel, author) ->
-		{
-			event.reply("Ops, qualcuno si è scordato di settare una callback per questo comando!").queue();
-			return true;
-		};
-		/*this.maxArgumentNumber = maxArgumentNumber;
-		this.minArgumentNumber = maxArgumentNumber;
-		this.argumentsDescription = "";*/
+				event.reply("Ops, qualcuno si è scordato di settare una callback per questo comando!").queue();
 	}
 	
 	/**

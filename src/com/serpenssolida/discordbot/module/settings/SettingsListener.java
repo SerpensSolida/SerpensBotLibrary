@@ -23,22 +23,14 @@ public class SettingsListener extends BotListener
 		
 		//Command for changing the symbol for calling a command.
 		BotCommand command = new BotCommand("symbol", SerpensBot.getMessage("settings_command_symbol_desc"));
-		command.setAction((event, guild, channel, author) ->
-		{
-			this.setUnlistedBotCommandSymbol(event, guild, channel, author);
-			return true;
-		});
+		command.setAction(this::setUnlistedBotCommandSymbol);
 		command.getSubcommand()
 				.addOption(OptionType.STRING, "value", "Il nuovo simbolo da impostare per i comandi non listati.", true);
 		this.addBotCommand(command);
 		
 		//Command for changing the module prefix of a module.
 		command = new BotCommand("prefix", SerpensBot.getMessage("settings_command_prefix_desc"));
-		command.setAction((event, guild, channel, author) ->
-		{
-			this.modulePrefixCommand(event, guild, channel, author);
-			return true;
-		});
+		command.setAction(this::modulePrefixCommand);
 		command.getSubcommand()
 				.addOptions(new OptionData(OptionType.STRING, "module_name", SerpensBot.getMessage("settings_command_prefix_param1"), false).setRequired(false))
 				.addOption(OptionType.STRING, "new_prefix", SerpensBot.getMessage("settings_command_prefix_param2"), false);
@@ -46,11 +38,7 @@ public class SettingsListener extends BotListener
 		
 		//Command for changing the module prefix of a module.
 		command = new BotCommand("deletecommand", SerpensBot.getMessage("settings_command_deletecommand_desc"));
-		command.setAction((event, guild, channel, author) ->
-		{
-			this.setDeleteCommandMessages(event, guild, channel, author);
-			return true;
-		});
+		command.setAction(this::setDeleteCommandMessages);
 		command.getSubcommand()
 				.addOption(OptionType.BOOLEAN, "value", SerpensBot.getMessage("settings_command_deletecommand_param1"), true);
 		this.addBotCommand(command);

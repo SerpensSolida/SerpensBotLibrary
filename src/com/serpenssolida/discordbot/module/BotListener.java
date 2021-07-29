@@ -38,21 +38,13 @@ public class BotListener extends ListenerAdapter
 		this.internalID = modulePrefix;
 		
 		BotCommand command = new BotCommand("help", SerpensBot.getMessage("botlistener_command_help_desc"));
-		command.setAction((event, guild, channel, author) ->
-		{
-			this.sendHelp(event, guild, channel, author);
-			return true;
-		});
+		command.setAction(this::sendHelp);
 		command.getSubcommand()
 				.addOption(OptionType.STRING, "command-name", SerpensBot.getMessage("botlistener_command_help_param1"), false);
 		this.addBotCommand(command);
 		
 		command = new BotCommand("cancel", SerpensBot.getMessage("botlistener_command_cancel_desc"));
-		command.setAction((event, guild, channel, author) ->
-		{
-			this.cancelTask(event, guild, channel, author);
-			return true;
-		});
+		command.setAction(this::cancelTask);
 		this.addBotCommand(command);
 	}
 	

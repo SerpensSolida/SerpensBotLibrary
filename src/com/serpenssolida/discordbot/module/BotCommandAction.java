@@ -22,8 +22,6 @@ public interface BotCommandAction
 	 * @param author
 	 * 		Author that sent the command.
 	 *
-	 * @return
-	 * 		If the action has been set.
 	 */
-	boolean doAction(SlashCommandEvent event, Guild guild, MessageChannel channel, User author);
+	void doAction(SlashCommandEvent event, Guild guild, MessageChannel channel, User author);
 }
