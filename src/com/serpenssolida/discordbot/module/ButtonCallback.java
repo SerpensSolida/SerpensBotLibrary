@@ -24,6 +24,9 @@ public class ButtonCallback
 	 *
 	 * @param event
 	 * 		The event being performed.
+	 *
+	 * @return
+	 * 		If the action has been set.
 	 */
 	public boolean doAction(ButtonClickEvent event)
 	{

@@ -41,6 +41,9 @@ public abstract class Task
 	
 	/**
 	 * Starts the task using the given event.
+	 *
+	 * @param event
+	 * 		The event that created this task.
 	 */
 	public void start(GenericInteractionCreateEvent event)
 	{

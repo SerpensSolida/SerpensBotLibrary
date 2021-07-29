@@ -53,6 +53,8 @@ public class UnlistedBotCommand
 	/**
 	 * Calls the callback of the command, if no collback is set the function return false.
 	 *
+	 * @param guild
+	 * 		The guild that generetated the event.
 	 * @param channel
 	 * 		Channel where the message was sent.
 	 * @param message
@@ -61,6 +63,9 @@ public class UnlistedBotCommand
 	 * 		Author of the message.
 	 * @param args
 	 * 		Arguments passed to the command.
+	 *
+	 * @return
+	 * 		If the action has been set.
 	 */
 	public boolean doAction(Guild guild, MessageChannel channel, Message message, User author, String[] args)
 	{

@@ -106,6 +106,8 @@ public class MessageUtils
 	 *
 	 * @param title
 	 * 		The title to give to the embed.
+	 * @param author
+	 * 		The user that will be shown in the footer.
 	 *
 	 * @return
 	 * 		A {@link EmbedBuilder} with standard content.

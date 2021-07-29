@@ -289,7 +289,7 @@ public class BotListener extends ListenerAdapter
 	 * 		The guild.
 	 *
 	 * @return
-	 * 		An {@link ArrayList<com.serpenssolida.discordbot.module.UnlistedBotCommand.CommandData>} of commands.
+	 * 		An ArrayList of commands.
 	 */
 	public ArrayList<CommandData> generateCommands(Guild guild)
 	{

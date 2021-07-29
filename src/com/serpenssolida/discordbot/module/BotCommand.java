@@ -45,17 +45,18 @@ public class BotCommand
 	 *
 	 * @param event
 	 * 		The event being performed.
+	 *
 	 */
-	public boolean doAction(SlashCommandEvent event)
+	public void doAction(SlashCommandEvent event)
 	{
 		if (this.action != null)
 		{
-			return this.action.doAction(event, event.getGuild(), event.getChannel(), event.getUser());
+			this.action.doAction(event, event.getGuild(), event.getChannel(), event.getUser());
+			return;
 		}
 		
 		System.err.println("Action not set for command: " + this.getId());
 		
-		return false;
 	}
 	
 	public String getId()

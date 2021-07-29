@@ -140,7 +140,7 @@ public class SerpensBot
 	 * 		The username of the users to search for.
 	 *
 	 * @return
-	 * 		An {@link ArrayList<Member>} that contains all the match.
+	 * 		An ArrayList that contains all the users that match the query.
 	 */
 	public static ArrayList<Member> findUsersByName(Guild guild, String userName)
 	{
@@ -208,6 +208,9 @@ public class SerpensBot
 	
 	/**
 	 * Load the {@link ResourceBundle} from the root directory. If there is no language file a default one will be used.
+	 *
+	 * @return
+	 * 		The resource bundle that has been loaded.
 	 */
 	public static ResourceBundle loadLanguage()
 	{

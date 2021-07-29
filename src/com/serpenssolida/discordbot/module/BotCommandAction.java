@@ -13,6 +13,8 @@ public interface BotCommandAction
 	/**
 	 * Called when the command is sent to the chat.
 	 *
+	 * @param event
+	 * 		The event that called this action.
 	 * @param guild
 	 * 		The guild the commands was sent on.
 	 * @param channel
@@ -21,6 +23,7 @@ public interface BotCommandAction
 	 * 		Author that sent the command.
 	 *
 	 * @return
+	 * 		If the action has been set.
 	 */
 	boolean doAction(SlashCommandEvent event, Guild guild, MessageChannel channel, User author);
 }
