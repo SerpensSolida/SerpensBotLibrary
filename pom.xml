@@ -79,7 +79,7 @@
     <distributionManagement>
         <repository>
             <id>serpensbot-library</id>
-            <url>http://serpensbot.fmistri.it/</url>
+            <url>https://maven.fmistri.it</url>
         </repository>
     </distributionManagement>
 
