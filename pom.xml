@@ -79,7 +79,7 @@
     <distributionManagement>
         <repository>
             <id>serpensbot-library</id>
-            <url>http://fmistri.it:10666</url>
+            <url>http://serpensbot.fmistri.it/</url>
         </repository>
     </distributionManagement>
 
