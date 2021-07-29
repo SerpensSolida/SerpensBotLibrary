@@ -2,22 +2,19 @@ package com.serpenssolida.discordbot.avatar;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URL;
-import javax.imageio.ImageIO;
-
 import net.dv8tion.jda.api.entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
 
 public class AvatarCache
 {
+	private static Logger logger = LoggerFactory.getLogger(AvatarCache.class);
+	
 	/**
 	 * Get the give user's avatar from the cache.
 	 *
@@ -44,7 +41,7 @@ public class AvatarCache
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logger.error("", e);
 			return null;
 		}
 	}

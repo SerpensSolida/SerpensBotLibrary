@@ -501,7 +501,6 @@ public class BotListener extends ListenerAdapter
 		//Replace the current task (if there is one) with the new one.
 		if (currentUserTask != null)
 		{
-			System.out.println("L'utente ha già una task, annullamento task corrente.");
 			this.removeTask(guildID, currentUserTask);
 		}
 		

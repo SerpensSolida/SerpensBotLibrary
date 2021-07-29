@@ -16,6 +16,8 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
@@ -33,6 +35,8 @@ public class SerpensBot
 	public static String settingsFolder = "settings";
 	public static ResourceBundle language;
 	
+	private static Logger logger = LoggerFactory.getLogger(SerpensBot.class);
+	
 	public static void start()
 	{
 		//Load language
@@ -43,7 +47,7 @@ public class SerpensBot
 		
 		if (data == null)
 		{
-			System.err.println(SerpensBot.getMessage("missing_json"));
+			logger.error(SerpensBot.getMessage("missing_json"));
 			return;
 		}
 		
@@ -61,13 +65,12 @@ public class SerpensBot
 		}
 		catch (LoginException e)
 		{
-			System.err.println(SerpensBot.getMessage("login_error"));
-			e.printStackTrace();
+			logger.error(SerpensBot.getMessage("login_error"), e);
 			return;
 		}
 		catch (InterruptedException e)
 		{
-			e.printStackTrace();
+			logger.error("", e);
 			return;
 		}
 		
@@ -76,14 +79,14 @@ public class SerpensBot
 		
 		if (data.getOwner() == null || data.getOwner().isBlank())
 		{
-			System.err.println(SerpensBot.getMessage("owner_not_set"));
+			logger.error(SerpensBot.getMessage("owner_not_set"));
 			return;
 		}
 		
 		//Set the owner of the bot.
 		SerpensBot.ownerId = data.getOwner();
 		
-		System.out.println(SerpensBot.getMessage("bot_ready"));
+		logger.info(SerpensBot.getMessage("bot_ready"));
 	}
 	
 	/**
@@ -128,7 +131,7 @@ public class SerpensBot
 			}
 		}
 		
-		commands.queue(a -> System.out.println(SerpensBot.getMessage("guild_commands_updated", guild.getName())));
+		commands.queue(a -> logger.info(SerpensBot.getMessage("guild_commands_updated", guild.getName())));
 	}
 	
 	/**
@@ -187,14 +190,14 @@ public class SerpensBot
 	{
 		File tokenFile = new File("bot.json");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		System.out.println(SerpensBot.getMessage("reading_main_settings"));
+		logger.info(SerpensBot.getMessage("reading_main_settings"));
 		
 		try (BufferedReader reader = new BufferedReader(new FileReader(tokenFile)))
 		{
 			BotData botData = gson.fromJson(reader, BotData.class);
 			
-			System.out.println(SerpensBot.getMessage("token", botData.getToken()));
-			System.out.println(SerpensBot.getMessage("owner", botData.getOwner()));
+			logger.info(SerpensBot.getMessage("token", botData.getToken()));
+			logger.info(SerpensBot.getMessage("owner", botData.getOwner()));
 			
 			return botData;
 		}
@@ -218,7 +221,7 @@ public class SerpensBot
 		{
 			ResourceBundle language = new PropertyResourceBundle(Files.newInputStream(Paths.get("SerpensBot.properties")));
 			
-			System.out.println(language.getString("loaded_resource_bundle_external"));
+			logger.info(language.getString("loaded_resource_bundle_external"));
 			
 			return language;
 		}
@@ -226,7 +229,7 @@ public class SerpensBot
 		{
 			ResourceBundle language = ResourceBundle.getBundle("SerpensBot");
 			
-			System.out.println(language.getString("loaded_resource_bundle_default"));
+			logger.info(language.getString("loaded_resource_bundle_default"));
 			
 			return language;
 		}
@@ -297,7 +300,7 @@ public class SerpensBot
 		if (guild == null)
 			return;
 		
-		System.out.println(SerpensBot.getMessage("loading_guild_settings", guild.getName()));
+		logger.info(SerpensBot.getMessage("loading_guild_settings", guild.getName()));
 		
 		try (BufferedReader reader = new BufferedReader(new FileReader(settingsFile)))
 		{
@@ -323,8 +326,8 @@ public class SerpensBot
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println(SerpensBot.getMessage("no_guild_settings_file", guild.getName()));
-			System.out.println(SerpensBot.getMessage("guild_settings_file_creation", guild.getName()));
+			logger.info(SerpensBot.getMessage("no_guild_settings_file", guild.getName()));
+			logger.info(SerpensBot.getMessage("guild_settings_file_creation", guild.getName()));
 			
 			//Initialize default values.
 			SerpensBot.commandSymbol.put(guildID, "/");
@@ -339,7 +342,7 @@ public class SerpensBot
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logger.error("", e);
 		}
 		
 	}
@@ -359,7 +362,7 @@ public class SerpensBot
 		if (guild == null)
 			return;
 		
-		System.out.println(SerpensBot.getMessage("saving_guild_settings", guild.getName()));
+		logger.info(SerpensBot.getMessage("saving_guild_settings", guild.getName()));
 		
 		try (PrintWriter writer = new PrintWriter(new FileWriter(settingsFile)))
 		{
@@ -384,7 +387,7 @@ public class SerpensBot
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println(SerpensBot.getMessage("guild_settings_file_missing", guild.getName()));
+			logger.info(SerpensBot.getMessage("guild_settings_file_missing", guild.getName()));
 			
 			try
 			{
@@ -395,12 +398,12 @@ public class SerpensBot
 			}
 			catch (IOException ex)
 			{
-				ex.printStackTrace();
+				logger.error("", e);
 			}
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logger.error("", e);
 		}
 		
 	}
