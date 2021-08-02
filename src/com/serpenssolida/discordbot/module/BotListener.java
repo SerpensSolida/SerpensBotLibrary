@@ -1,11 +1,16 @@
 package com.serpenssolida.discordbot.module;
 
-import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.MessageUtils;
+import com.serpenssolida.discordbot.SerpensBot;
+import com.serpenssolida.discordbot.command.BotCommand;
+import com.serpenssolida.discordbot.command.UnlistedBotCommand;
+import com.serpenssolida.discordbot.interaction.InteractionCallback;
+import com.serpenssolida.discordbot.interaction.InteractionGroup;
+import com.serpenssolida.discordbot.interaction.WrongInteractionEventException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -15,7 +20,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.components.Button;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -30,7 +36,10 @@ public class BotListener extends ListenerAdapter
 	private HashMap<String, HashMap<User, Task>> tasks = new HashMap<>(); //List of task currently running.
 	private HashMap<String, UnlistedBotCommand> unlistedBotCommands = new HashMap<>(); //List of commands of the module.
 	private LinkedHashMap<String, BotCommand> botCommands = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
-	private HashMap<String, HashMap<String, ButtonGroup>> activeGlobalButtons = new HashMap<>();
+	//private HashMap<String, HashMap<String, ButtonGroup>> activeGlobalButtons = new HashMap<>();
+	private HashMap<String, HashMap<String, InteractionGroup>> activeGlobalInteractions = new HashMap<>();
+	
+	private static Logger logger = LoggerFactory.getLogger(BotListener.class);
 	
 	public BotListener(String modulePrefix)
 	{
@@ -64,7 +73,11 @@ public class BotListener extends ListenerAdapter
 		Task task = this.getTask(guild.getId(), author);
 		
 		//If the author of the message is the bot, ignore the message.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId())) return;
+		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
+			return;
+		
+		//Log the event.
+		logger.info("[MESSAGE RECEIVED][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), message.substring(0, Math.min(25, message.length() - 1)));
 		
 		if (message.startsWith(commandPrefix) && !commandPrefix.equals(message.strip())) //The message is a command.
 		{
@@ -102,7 +115,7 @@ public class BotListener extends ListenerAdapter
 			}
 			else
 			{
-				//channel.sendMessage("> Numero argomenti errato.").queue();
+				//Send warning message.
 				String embedTitle = SerpensBot.getMessage("botlistener_unlisted_command_title", command.getId());
 				String embedDescription = SerpensBot.getMessage("botlistener_unlisted_command_argument_number_error");
 				channel.sendMessage(MessageUtils.buildSimpleMessage(embedTitle, author, embedDescription)).queue();
@@ -139,6 +152,9 @@ public class BotListener extends ListenerAdapter
 		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
 			return;
 		
+		//Log the event.
+		logger.info("[REACTION ADDED][{}][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getMessageId(), messageReaction.getReactionEmote().getName());
+		
 		//Pass the reaction and the author to the task the user is running.
 		Task task = this.getTask(guild.getId(), author);
 		
@@ -160,9 +176,17 @@ public class BotListener extends ListenerAdapter
 			}
 			catch (PermissionException e)
 			{
+				//Abort task
 				this.removeTask(guild.getId(), task);
-				Message errorMessage = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_reaction_action_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
+				
+				//Send error message.
+				String embedTitle = SerpensBot.getMessage("botlistener_reaction_action_error");
+				String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
+				Message errorMessage = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
 				channel.sendMessage(errorMessage).queue();
+				
+				//Log the error.
+				logger.error("", e);
 			}
 		});
 	}
@@ -178,6 +202,9 @@ public class BotListener extends ListenerAdapter
 		if (!event.getName().equals(this.getModulePrefix(guild.getId())))
 			return;
 		
+		//Log the event.
+		logger.info("[SLASH COMMAND][{}][{}][{}] {}", guild.getName(), event.getChannel().getName(), event.getUser().getName(), event.getCommandPath());
+		
 		try
 		{
 			//Get the command from the list using the event command name and run it.
@@ -186,15 +213,19 @@ public class BotListener extends ListenerAdapter
 		}
 		catch (PermissionException e)
 		{
+			//Send error message.
 			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
 			event.reply(message).setEphemeral(true).queue();
+			
+			//Log the error.
+			logger.error("", e);
 		}
 	}
 	
 	@Override
-	public void onButtonClick(@Nonnull ButtonClickEvent event)
+	public void onGenericComponentInteractionCreate(@Nonnull GenericComponentInteractionCreateEvent event)
 	{
-		Button button = event.getButton(); //Reaction added to the message.
+		String componendId = event.getComponentId();
 		User author = event.getUser(); //The user that added the reaction.
 		Guild guild = event.getGuild(); //The user that added the reaction.
 		MessageChannel channel = event.getChannel(); //Channel where the event occurred.
@@ -207,27 +238,27 @@ public class BotListener extends ListenerAdapter
 		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
 			return;
 		
-		if (button == null)
-			return;
+		//Log the event.
+		logger.info("[INTERACTION][{}][{}][{}][{}] {}", guild.getName(), event.getChannel().getName(), event.getUser().getName(), event.getComponentType(), event.getComponentId());
 		
-		//Get the button that the user can press.
-		ButtonGroup buttonGroup = this.getButtonGroup(guild.getId(), event.getMessageId());
+		//Get the interacction that the user can interact with.
+		InteractionGroup interactionGroup = this.getInteractionGroup(guild.getId(), event.getMessageId());
 		
 		//Task can have buttons too.
 		Task task = this.getTask(guild.getId(), author);
 		
 		if (task != null)
 		{
-			buttonGroup = task.getButtonGroup();
+			interactionGroup = task.getInteractionGroup();
 			
-			if (buttonGroup != null)
+			if (interactionGroup != null)
 			{
-				ButtonCallback buttonCallback = buttonGroup.getButton(button.getId());
+				InteractionCallback interactionCallback = interactionGroup.getComponentCallback(componendId);
 				
 				try
 				{
 					//Do button action.
-					boolean deleteMessage = buttonCallback.doAction(event);
+					boolean deleteMessage = interactionCallback.doAction(event);
 					//task.deleteButtons();
 					
 					//Delete message that has the clicked button if it should be deleted.
@@ -242,23 +273,45 @@ public class BotListener extends ListenerAdapter
 						this.removeTask(guild.getId(), task);
 					}
 				}
+				catch (WrongInteractionEventException e)
+				{
+					//Abort task.
+					this.removeTask(guild.getId(), task);
+					
+					//Send error message.
+					String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
+					String embedDescription = SerpensBot.getMessage("botlistener_interaction_event_type_error", e.getInteractionId(), e.getExpected(), e.getFound());
+					Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+					event.reply(message).setEphemeral(true).queue();
+					
+					//Log the error.
+					logger.error("", e);
+				}
 				catch (PermissionException e)
 				{
+					//Abort task.
 					this.removeTask(guild.getId(), task);
-					Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_button_action_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
+					
+					//Send error message.
+					String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
+					String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
+					Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
 					event.reply(message).setEphemeral(true).queue();
+					
+					//Log the error.
+					logger.error("", e);
 				}
 			}
 		}
-		else if (buttonGroup != null) //If no button group is found and the user hasn't got any task the user cannot press a button.
+		else if (interactionGroup != null) //If no button group is found and the user hasn't got any task the user cannot press a button.
 		{
-			ButtonCallback buttonCallback = buttonGroup.getButton(button.getId());
+			InteractionCallback interactionCallback = interactionGroup.getComponentCallback(componendId);
 			//event.deferEdit().queue(); //Let discord know we know the button has been clicked.
 			
 			try
 			{
-				//Do button action.
-				boolean deleteMessage = buttonCallback.doAction(event);
+				//Do interaction action.
+				boolean deleteMessage = interactionCallback.doAction(event);
 				
 				//Delete message that has the clicked button if it should be deleted.
 				if (SerpensBot.getDeleteCommandMessages(guild.getId()) && deleteMessage)
@@ -266,10 +319,27 @@ public class BotListener extends ListenerAdapter
 					event.getHook().deleteOriginal().queue();
 				}
 			}
+			catch (WrongInteractionEventException e)
+			{
+				//Send error message.
+				String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
+				String embedDescription = SerpensBot.getMessage("botlistener_interaction_event_type_error", e.getInteractionId(), e.getExpected(), e.getFound());
+				Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+				event.reply(message).setEphemeral(true).queue();
+				
+				//Log the error.
+				logger.error("", e);
+			}
 			catch (PermissionException e)
 			{
-				Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_button_action_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
+				//Send error message.
+				String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
+				String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
+				Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
 				event.reply(message).setEphemeral(true).queue();
+				
+				//Log the error.
+				logger.error("", e);
 			}
 		}
 	}
@@ -523,22 +593,22 @@ public class BotListener extends ListenerAdapter
 		this.tasks.get(guildID).remove(task.getUser());
 	}
 	
-	public void addButtonGroup(String guildID, String messageId, ButtonGroup buttonGroup)
+	public void addInteractionGroup(String guildID, String messageId, InteractionGroup interactionGroup)
 	{
-		HashMap<String, ButtonGroup> guildButtonGroups = this.activeGlobalButtons.computeIfAbsent(guildID, k -> new HashMap<>());
-		guildButtonGroups.put(messageId, buttonGroup);
+		HashMap<String, InteractionGroup> guildInteractionGroup = this.activeGlobalInteractions.computeIfAbsent(guildID, k -> new HashMap<>());
+		guildInteractionGroup.put(messageId, interactionGroup);
 	}
 	
-	public ButtonGroup getButtonGroup(String guildID, String messageId)
+	public InteractionGroup getInteractionGroup(String guildID, String messageId)
 	{
-		HashMap<String, ButtonGroup> guildButtonGroups = this.activeGlobalButtons.computeIfAbsent(guildID, k -> new HashMap<>());
-		return guildButtonGroups.get(messageId);
+		HashMap<String, InteractionGroup> guildInteractionGroup = this.activeGlobalInteractions.computeIfAbsent(guildID, k -> new HashMap<>());
+		return guildInteractionGroup.get(messageId);
 	}
 	
-	public void removeButtonGroup(String guildID, String messageId)
+	public void removeInteractionGroup(String guildID, String messageId)
 	{
-		HashMap<String, ButtonGroup> guildButtonGroups = this.activeGlobalButtons.computeIfAbsent(guildID, k -> new HashMap<>());
-		guildButtonGroups.remove(messageId);
+		HashMap<String, InteractionGroup> guildInteractionGroup = this.activeGlobalInteractions.computeIfAbsent(guildID, k -> new HashMap<>());
+		guildInteractionGroup.remove(messageId);
 	}
 	
 	public String getModuleName()

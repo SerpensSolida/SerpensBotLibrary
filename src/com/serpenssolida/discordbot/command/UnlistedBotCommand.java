@@ -1,10 +1,12 @@
-package com.serpenssolida.discordbot.module;
+package com.serpenssolida.discordbot.command;
 
 import com.serpenssolida.discordbot.SerpensBot;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
@@ -22,6 +24,8 @@ public class UnlistedBotCommand
 	private HashMap<String, String> modulePrefix = new HashMap<>(); //Prefix of the module that owns this command.
 	private UnlistedBotCommandAction action; //Callback that is called when the command is sent to the chat.
 	private String defaultModulePrefix; //Default module prefix.
+	
+	private static Logger logger = LoggerFactory.getLogger(BotCommand.class);
 	
 	public UnlistedBotCommand(String id, int maxArgumentNumber)
 	{
@@ -74,7 +78,7 @@ public class UnlistedBotCommand
 			return this.action.doAction(guild, channel, message, author, args);
 		}
 		
-		System.err.println("Action not set for command: " + this.getId());
+		logger.error(SerpensBot.getMessage("botcommand_action_not_set_log", this.getId()));
 		
 		return false;
 	}

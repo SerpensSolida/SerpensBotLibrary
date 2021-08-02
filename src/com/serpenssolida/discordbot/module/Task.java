@@ -1,5 +1,8 @@
 package com.serpenssolida.discordbot.module;
 
+import com.serpenssolida.discordbot.interaction.ButtonAction;
+import com.serpenssolida.discordbot.interaction.InteractionCallback;
+import com.serpenssolida.discordbot.interaction.InteractionGroup;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -17,7 +20,8 @@ public abstract class Task
 	protected Guild guild;
 	protected boolean interrupted; //If the task was cancelled or not.
 	protected boolean running; //If the task is running or not.
-	protected ButtonGroup buttonGroup; //Buttons that the user can press.
+	//protected ButtonGroup buttonGroup; //Buttons that the user can press.
+	protected InteractionGroup interactionGroup; //Buttons that the user can press.
 	
 	public Task(Guild guild, User user, MessageChannel channel)
 	{
@@ -151,10 +155,10 @@ public abstract class Task
 	 */
 	public void registerCancelButton()
 	{
-		if (this.buttonGroup == null)
-			this.buttonGroup = new ButtonGroup();
+		if (this.interactionGroup == null)
+			this.interactionGroup = new InteractionGroup();
 		
-		this.buttonGroup.addButton(new ButtonCallback("cancel-task", this.CANCEL_BUTTON));
+		this.interactionGroup.addButtonCallback("cancel-task", this.CANCEL_BUTTON);
 	}
 	
 	/**
@@ -231,14 +235,14 @@ public abstract class Task
 		this.lastMessage = lastMessage;
 	}
 	
-	public ButtonGroup getButtonGroup()
+	public InteractionGroup getInteractionGroup()
 	{
-		return this.buttonGroup;
+		return this.interactionGroup;
 	}
 	
-	public void setButtonGroup(ButtonGroup buttonGroup)
+	public void setInteractionGroup(InteractionGroup buttonGroup)
 	{
-		this.buttonGroup = buttonGroup;
+		this.interactionGroup = buttonGroup;
 	}
 	
 	/**
@@ -256,7 +260,7 @@ public abstract class Task
 		event.getHook().deleteOriginal().queue();
 		//event.getHook().editOriginal(b.build()).queue(); //Remove buttons from the original message.
 		
-		this.buttonGroup = null;
-		return ButtonCallback.DELETE_MESSAGE;
+		this.interactionGroup = null;
+		return InteractionCallback.DELETE_MESSAGE;
 	};
 }

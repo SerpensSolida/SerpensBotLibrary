@@ -2,7 +2,7 @@ package com.serpenssolida.discordbot.module.settings;
 
 import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.MessageUtils;
-import com.serpenssolida.discordbot.module.BotCommand;
+import com.serpenssolida.discordbot.command.BotCommand;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;

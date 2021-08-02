@@ -1,4 +1,4 @@
-package com.serpenssolida.discordbot.module;
+package com.serpenssolida.discordbot.command;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
