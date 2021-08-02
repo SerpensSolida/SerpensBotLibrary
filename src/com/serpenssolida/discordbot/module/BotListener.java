@@ -57,6 +57,7 @@ public class BotListener extends ListenerAdapter
 		this.addBotCommand(command);
 	}
 	
+	@Override
 	public void onMessageReceived(@Nonnull MessageReceivedEvent event)
 	{
 		//Don't accept messages from private channels.
@@ -134,6 +135,7 @@ public class BotListener extends ListenerAdapter
 		}
 	}
 	
+	@Override
 	public void onMessageReactionAdd(@Nonnull MessageReactionAddEvent event)
 	{
 		//Don't accept reaction from private channels.
@@ -552,33 +554,50 @@ public class BotListener extends ListenerAdapter
 		return this.tasks.get(guildID).get(user);
 	}
 	
+	/**
+	 * Start the given task in the given guild id.
+	 *
+	 * @param guildID
+	 * 		The guild id the task is currently active.
+	 * @param task
+	 * 		The task that will be started.
+	 * @param event
+	 *  	The event that started the task.
+	 */
 	protected void startTask(String guildID, Task task, GenericInteractionCreateEvent event)
 	{
 		this.addTask(guildID, task);
 		task.start(event);
 	}
 	
+	/**
+	 * Start the given task in the given guild id.
+	 *
+	 * @param guildID
+	 * 		The guild id the task is currently active.
+	 * @param task
+	 * 		The task that will be started.
+	 */
+	protected void startTask(String guildID, Task task)
+	{
+		this.addTask(guildID, task);
+		task.start();
+	}
+	
 	protected void addTask(String guildID, Task task)
 	{
 		if (task.isInterrupted())
-		{
 			return;
-		}
 		
 		User user = task.getUser();
 		Task currentUserTask = this.getTask(guildID, user);
 		
 		//Replace the current task (if there is one) with the new one.
 		if (currentUserTask != null)
-		{
 			this.removeTask(guildID, currentUserTask);
-		}
 		
 		if (!this.tasks.containsKey(guildID))
-		{
 			this.tasks.put(guildID, new HashMap<>());
-		}
-		
 		
 		this.tasks.get(guildID).put(user, task);
 	}
@@ -586,9 +605,7 @@ public class BotListener extends ListenerAdapter
 	protected void removeTask(String guildID, Task task)
 	{
 		if (!this.tasks.containsKey(guildID))
-		{
 			this.tasks.put(guildID, new HashMap<>());
-		}
 		
 		this.tasks.get(guildID).remove(task.getUser());
 	}

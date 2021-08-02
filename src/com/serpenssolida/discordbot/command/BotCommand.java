@@ -7,7 +7,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a command that can be sent to the chat.
+ * Represents a SlashCommand the user can call from the discord app. <br>
+ *
+ * <p>When a given command is sent to the chat the listener will automatically call the {@link BotCommandAction} assigned to
+ * the given command. <br></p>
+ *
+ * <p>Specifically a BotCommand works as a wrapper for a sub command that will be inserted into the main command genereted automatically by the listener, in fact
+ * to call a command the user will type for example {@code /prefix command-id} where {@code prefix} is the prefix of the listener
+ * and {@code command-id} is the id of the command given when instantiating one BotCommand. </p>
+ *
+ * <p>The method {@code getSubcommand} is used to add arguments and parameters to the command.</p>
+ * <p><h2>Example</h2>
+ * <pre>{@code
+ * 	//Create a simple hello command.
+ * 	BotCommand command = new BotCommand("hello", "The bot will say hello.");
+ *
+ * 	//We add the parameter name to the command.
+ * 	command.getSubCommand().addOption(OptionType.STRING, "name", "The name to greet.", true)
+ *
+ * 	//We set the command callback, this will be called when a user send the command /prefix hello.
+ * 	command.setAction((event, guild, channel, author) ->
+ * 	{
+ * 		//We get the value of the parameter "name".
+ * 		OptionMapping nameArg = event.getOption("name")
+ *
+ * 		//We send a message greeting the user.
+ * 		event.reply("Hello " + nameArg.getAsString()).queue();
+ * 	});
+ *
+ * 	//Add the command to the listener.
+ * 	this.addBotCommand(command);
+ * }<pre/></p>
+ *
  */
 public class BotCommand
 {
@@ -17,12 +48,17 @@ public class BotCommand
 	
 	private static Logger logger = LoggerFactory.getLogger(BotCommand.class);
 	
+	/**
+	 * @param id
+	 * 		id of the command used to execute the command from chat.
+	 * @param description
+	 * 		Description of the command that will be shown to the user when typing it.
+	 */
 	public BotCommand(String id, String description)
 	{
 		this.id = id;
 		this.subcommand = new SubcommandData(this.id, description);
-		this.action = (event, guild, channel, author) ->
-				event.reply("Ops, qualcuno si è scordato di settare una callback per questo comando!").queue();
+		this.action = null;
 	}
 	
 	/**
@@ -62,6 +98,17 @@ public class BotCommand
 		return this.id;
 	}
 	
+	/**
+	 * The {@link SubcommandData} used to set up command arguments.
+	 *
+	 * <h2>Example</h2>
+	 * <pre>{@code //Add a requred string argument "name" to the BotCommand.
+	 * command.getSubCommand().addOption(OptionType.STRING, "name", "The name to greet.", true)}
+	 * </pre>
+	 *
+	 * @return
+	 * 		The subcommand that this BotCommand wraps.
+	 */
 	public SubcommandData getSubcommand()
 	{
 		return this.subcommand;

@@ -20,7 +20,6 @@ public abstract class Task
 	protected Guild guild;
 	protected boolean interrupted; //If the task was cancelled or not.
 	protected boolean running; //If the task is running or not.
-	//protected ButtonGroup buttonGroup; //Buttons that the user can press.
 	protected InteractionGroup interactionGroup; //Buttons that the user can press.
 	
 	public Task(Guild guild, User user, MessageChannel channel)

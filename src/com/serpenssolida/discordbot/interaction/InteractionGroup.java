@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 /**
  * This class represent the group of interaction callback linked to components of a message.
+ *
+ * <p>InteractionGroup usually are registered to a {@link com.serpenssolida.discordbot.module.Task} or a {@link com.serpenssolida.discordbot.module.BotListener}
+ * and when registered they are linked to a message. The InteractionGroup when registered must contain <u>all</u> {@link InteractionCallback}
+ * of the component of the message, if not the interaction can fail in unexpected ways.</p>
  */
 public class InteractionGroup
 {
@@ -31,7 +35,7 @@ public class InteractionGroup
 	
 	/**
 	 * Link the given action to the selection menu component with the given id. <br>
-	 * When a user select an option the given action will be performed.
+	 * When a user select an option from the component the given action will be performed.
 	 *
 	 * @param id
 	 * 		id of the selection menu component to link the action to.
