@@ -244,7 +244,8 @@ public abstract class Task
 	
 	public void clearInteractionGroup()
 	{
-		this.interactionGroup = null;
+		if (this.interactionGroup != null)
+			this.interactionGroup = null;
 	}
 	
 	/**
