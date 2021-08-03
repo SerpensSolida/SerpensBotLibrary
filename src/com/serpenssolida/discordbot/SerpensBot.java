@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.serpenssolida.discordbot.module.BotListener;
 import com.serpenssolida.discordbot.module.base.BaseListener;
+import com.serpenssolida.discordbot.module.logger.LoggerListener;
 import com.serpenssolida.discordbot.module.settings.SettingsData;
 import com.serpenssolida.discordbot.module.settings.SettingsListener;
 import net.dv8tion.jda.api.JDA;
@@ -76,6 +77,7 @@ public class SerpensBot
 		
 		api.addEventListener(new BaseListener());
 		api.addEventListener(new SettingsListener());
+		api.addEventListener(new LoggerListener());
 		
 		if (data.getOwner() == null || data.getOwner().isBlank())
 		{

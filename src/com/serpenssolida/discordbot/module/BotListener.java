@@ -77,9 +77,6 @@ public class BotListener extends ListenerAdapter
 		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
 			return;
 		
-		//Log the event.
-		logger.info("[MESSAGE RECEIVED][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), message.substring(0, Math.min(25, message.length() - 1)));
-		
 		if (message.startsWith(commandPrefix) && !commandPrefix.equals(message.strip())) //The message is a command.
 		{
 			UnlistedBotCommand.CommandData data = UnlistedBotCommand.getCommandDataFromString(commandPrefix, message);
@@ -153,9 +150,6 @@ public class BotListener extends ListenerAdapter
 		//Ignore bot reaction.
 		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
 			return;
-		
-		//Log the event.
-		logger.info("[REACTION ADDED][{}][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getMessageId(), messageReaction.getReactionEmote().getName());
 		
 		//Pass the reaction and the author to the task the user is running.
 		Task task = this.getTask(guild.getId(), author);
@@ -239,9 +233,6 @@ public class BotListener extends ListenerAdapter
 		//Ignore bot reaction.
 		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
 			return;
-		
-		//Log the event.
-		logger.info("[INTERACTION][{}][{}][{}][{}] {}", guild.getName(), event.getChannel().getName(), event.getUser().getName(), event.getComponentType(), event.getComponentId());
 		
 		//Get the interacction that the user can interact with.
 		InteractionGroup interactionGroup = this.getInteractionGroup(guild.getId(), event.getMessageId());

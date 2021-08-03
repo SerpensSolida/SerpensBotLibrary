@@ -17,9 +17,8 @@ import org.slf4j.LoggerFactory;
  * and {@code command-id} is the id of the command given when instantiating one BotCommand. </p>
  *
  * <p>The method {@code getSubcommand} is used to add arguments and parameters to the command.</p>
- * <p><h2>Example</h2>
- * <pre>{@code
- * 	//Create a simple hello command.
+ * <p><strong>Example:</strong></p>
+ * <pre>{@code 	//Create a simple hello command.
  * 	BotCommand command = new BotCommand("hello", "The bot will say hello.");
  *
  * 	//We add the parameter name to the command.
@@ -36,8 +35,7 @@ import org.slf4j.LoggerFactory;
  * 	});
  *
  * 	//Add the command to the listener.
- * 	this.addBotCommand(command);
- * }<pre/></p>
+ * 	this.addBotCommand(command);}</pre>
  *
  */
 public class BotCommand
@@ -101,7 +99,7 @@ public class BotCommand
 	/**
 	 * The {@link SubcommandData} used to set up command arguments.
 	 *
-	 * <h2>Example</h2>
+	 * <p><strong>Example:</strong></p>
 	 * <pre>{@code //Add a requred string argument "name" to the BotCommand.
 	 * command.getSubCommand().addOption(OptionType.STRING, "name", "The name to greet.", true)}
 	 * </pre>
