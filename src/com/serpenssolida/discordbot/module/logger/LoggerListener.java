@@ -88,7 +88,8 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Log the event.
-		logger.info("[INTERACTION][{}][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getComponentType(), componendId);
+		String messageId = event.getMessage() == null ? "null" : event.getMessage().getId();
+		logger.info("[INTERACTION][{}][#{}][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getComponentType(), messageId, componendId);
 	}
 	
 	@Override
