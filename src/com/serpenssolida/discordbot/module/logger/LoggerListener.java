@@ -45,7 +45,7 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Log the event.
-		logger.info("[MESSAGE RECEIVED][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), message.substring(0, Math.min(25, message.length())));
+		logger.info("[MESSAGE RECEIVED][{}][#{}][{}] {}", guild.getName(), channel.getName(), author.getName(), message.substring(0, Math.min(25, message.length())));
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Log the event.
-		logger.info("[REACTION ADDED][{}][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getMessageId(), messageReaction.getReactionEmote().getName());
+		logger.info("[REACTION ADDED][{}][#{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getMessageId(), messageReaction.getReactionEmote().getName());
 	}
 	
 	@Override

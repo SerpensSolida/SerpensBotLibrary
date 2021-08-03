@@ -199,7 +199,7 @@ public class BotListener extends ListenerAdapter
 			return;
 		
 		//Log the event.
-		logger.info("[SLASH COMMAND][{}][{}][{}] {}", guild.getName(), event.getChannel().getName(), event.getUser().getName(), event.getCommandPath());
+		logger.info("[SLASH COMMAND][{}][#{}][{}] {}", guild.getName(), event.getChannel().getName(), event.getUser().getName(), event.getCommandPath());
 		
 		try
 		{
