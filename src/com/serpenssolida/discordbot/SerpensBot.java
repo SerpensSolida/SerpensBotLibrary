@@ -70,7 +70,7 @@ public class SerpensBot
 		}
 		catch (InterruptedException e)
 		{
-			logger.error("", e);
+			logger.error(e.getLocalizedMessage(), e);
 			return;
 		}
 		
@@ -203,7 +203,7 @@ public class SerpensBot
 		}
 		catch (IOException e)
 		{
-			logger.error("", e);
+			logger.error(e.getLocalizedMessage(), e);
 		}
 		
 		return null;
@@ -342,7 +342,7 @@ public class SerpensBot
 		}
 		catch (IOException e)
 		{
-			logger.error("", e);
+			logger.error(e.getLocalizedMessage(), e);
 		}
 		
 	}
@@ -398,12 +398,12 @@ public class SerpensBot
 			}
 			catch (IOException ex)
 			{
-				logger.error("", e);
+				logger.error(e.getLocalizedMessage(), e);
 			}
 		}
 		catch (IOException e)
 		{
-			logger.error("", e);
+			logger.error(e.getLocalizedMessage(), e);
 		}
 		
 	}

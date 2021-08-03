@@ -41,7 +41,7 @@ public class AvatarCache
 		}
 		catch (IOException e)
 		{
-			logger.error("", e);
+			logger.error(e.getLocalizedMessage(), e);
 			return null;
 		}
 	}

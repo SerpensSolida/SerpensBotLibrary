@@ -188,7 +188,7 @@ public class BotListener extends ListenerAdapter
 				channel.sendMessage(errorMessage).queue();
 				
 				//Log the error.
-				logger.error("", e);
+				logger.error(e.getLocalizedMessage(), e);
 			}
 		});
 	}
@@ -220,7 +220,7 @@ public class BotListener extends ListenerAdapter
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
-			logger.error("", e);
+			logger.error(e.getLocalizedMessage(), e);
 		}
 	}
 	
@@ -287,7 +287,7 @@ public class BotListener extends ListenerAdapter
 					event.reply(message).setEphemeral(true).queue();
 					
 					//Log the error.
-					logger.error("", e);
+					logger.error(e.getLocalizedMessage(), e);
 				}
 				catch (PermissionException e)
 				{
@@ -301,7 +301,7 @@ public class BotListener extends ListenerAdapter
 					event.reply(message).setEphemeral(true).queue();
 					
 					//Log the error.
-					logger.error("", e);
+					logger.error(e.getLocalizedMessage(), e);
 				}
 			}
 		}
@@ -330,7 +330,7 @@ public class BotListener extends ListenerAdapter
 				event.reply(message).setEphemeral(true).queue();
 				
 				//Log the error.
-				logger.error("", e);
+				logger.error(e.getLocalizedMessage(), e);
 			}
 			catch (PermissionException e)
 			{
@@ -341,7 +341,7 @@ public class BotListener extends ListenerAdapter
 				event.reply(message).setEphemeral(true).queue();
 				
 				//Log the error.
-				logger.error("", e);
+				logger.error(e.getLocalizedMessage(), e);
 			}
 		}
 	}
