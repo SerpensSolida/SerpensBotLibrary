@@ -392,7 +392,7 @@ public class BotListener extends ListenerAdapter
 	{
 		OptionMapping commandName = event.getOption("command-name");
 		
-		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed("", author);
+		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed("No title", author);
 		
 		if (commandName == null)
 		{
