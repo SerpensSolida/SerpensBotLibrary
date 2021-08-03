@@ -203,7 +203,7 @@ public class SerpensBot
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logger.error("", e);
 		}
 		
 		return null;

@@ -14,21 +14,19 @@ import net.dv8tion.jda.api.interactions.components.Button;
  */
 public abstract class Task
 {
-	protected User user; //The user doing this task.
-	protected MessageChannel channel; //The channel the task is running on.
-	protected Message lastMessage; //Last message sent by the task.
-	protected Guild guild;
-	protected boolean interrupted; //If the task was cancelled or not.
-	protected boolean running; //If the task is running or not.
-	protected InteractionGroup interactionGroup; //Buttons that the user can press.
+	private User user; //The user doing this task.
+	private MessageChannel channel; //The channel the task is running on.
+	private Message lastMessage; //Last message sent by the task.
+	private Guild guild;
+	private boolean interrupted = false; //If the task was cancelled or not.
+	private boolean running = true; //If the task is running or not.
+	private InteractionGroup interactionGroup = null; //Buttons that the user can press.
 	
 	public Task(Guild guild, User user, MessageChannel channel)
 	{
 		this.guild = guild;
 		this.user = user;
 		this.channel = channel;
-		this.interrupted = false;
-		this.running = true;
 	}
 	
 	/**
@@ -239,9 +237,14 @@ public abstract class Task
 		return this.interactionGroup;
 	}
 	
-	public void setInteractionGroup(InteractionGroup buttonGroup)
+	public void setInteractionGroup(InteractionGroup interactionGroup)
 	{
-		this.interactionGroup = buttonGroup;
+		this.interactionGroup = interactionGroup;
+	}
+	
+	public void clearInteractionGroup()
+	{
+		this.interactionGroup = null;
 	}
 	
 	/**

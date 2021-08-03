@@ -69,4 +69,12 @@ public class InteractionGroup
 	{
 		this.components.remove(id);
 	}
+	
+	/**
+	 * Removes all callbacks from this InteractionGroup.
+	 */
+	public void clear()
+	{
+		this.components.clear();
+	}
 }
