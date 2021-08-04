@@ -248,7 +248,7 @@ public class BotListener extends ListenerAdapter
 			//Check if a callback was found.
 			if (interactionCallback == null)
 			{
-				logger.warn(SerpensBot.getMessage("botlistener_interaction_task_no_callback_error", componendId));
+				logger.warn(SerpensBot.getMessage("botlistener_interaction_task_no_callback_warn", componendId));
 				return;
 			}
 			
@@ -256,7 +256,6 @@ public class BotListener extends ListenerAdapter
 			{
 				//Do button action.
 				boolean deleteMessage = interactionCallback.doAction(event);
-				//task.deleteButtons();
 				
 				//Delete message that has the clicked button if it should be deleted.
 				if (SerpensBot.getDeleteCommandMessages(guild.getId()) && deleteMessage)
