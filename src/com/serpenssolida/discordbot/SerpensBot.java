@@ -34,6 +34,7 @@ public class SerpensBot
 	public static String ownerId;
 	
 	public static String settingsFolder = "settings";
+	public static ResourceBundle defaultLanguage = ResourceBundle.getBundle("SerpensBot");
 	public static ResourceBundle language;
 	
 	private static Logger logger = LoggerFactory.getLogger(SerpensBot.class);
@@ -229,8 +230,7 @@ public class SerpensBot
 		}
 		catch (IOException e)
 		{
-			ResourceBundle language = ResourceBundle.getBundle("SerpensBot");
-			
+			ResourceBundle language = SerpensBot.defaultLanguage;
 			logger.info(language.getString("loaded_resource_bundle_default"));
 			
 			return language;
@@ -239,12 +239,17 @@ public class SerpensBot
 	
 	public static String getMessage(String key)
 	{
-		return SerpensBot.language.getString(key);
+		//Check if the property file has the given key.
+		if (SerpensBot.language.containsKey(key))
+			return SerpensBot.language.getString(key);
+		
+		logger.warn(SerpensBot.defaultLanguage.getString("language_key_not_found"), key);
+		return SerpensBot.defaultLanguage.getString(key);
 	}
 	
 	public static String getMessage(String key, Object... args)
 	{
-		return String.format(SerpensBot.language.getString(key), args);
+		return String.format(SerpensBot.getMessage(key), args);
 	}
 	
 	/**
