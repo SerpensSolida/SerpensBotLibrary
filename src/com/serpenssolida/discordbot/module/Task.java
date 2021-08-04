@@ -20,7 +20,7 @@ public abstract class Task
 	private Guild guild;
 	private boolean interrupted = false; //If the task was cancelled or not.
 	private boolean running = true; //If the task is running or not.
-	private InteractionGroup interactionGroup = null; //Buttons that the user can press.
+	private InteractionGroup interactionGroup = new InteractionGroup(); //Buttons that the user can press.
 	
 	public Task(Guild guild, User user, MessageChannel channel)
 	{
@@ -108,17 +108,6 @@ public abstract class Task
 	}
 	
 	/**
-	 * Send a message in the channel the task is running on.
-	 *
-	 * @param message
-	 * 		Message to send to the channel.
-	 */
-	public void sendMessage(Message message)
-	{
-		this.getChannel().sendMessage(message).queue();
-	}
-	
-	/**
 	 * Sends a message in the channel the task is running on and add a reaction to it.
 	 * The message will also be stored in the variable this.lastMessage.
 	 *
@@ -129,10 +118,7 @@ public abstract class Task
 	{
 		this.addCancelButton(messageBuilder);
 		
-		this.channel.sendMessage(messageBuilder.build()).queue(sentMessage ->
-		{
-			this.lastMessage = sentMessage;
-		});
+		this.channel.sendMessage(messageBuilder.build()).queue(sentMessage -> this.lastMessage = sentMessage);
 	}
 	
 	/**
@@ -161,7 +147,7 @@ public abstract class Task
 	/**
 	 * Removes the buttons from the last message.
 	 */
-	public void deleteButtons()
+	public void deleteLastMessageComponents()
 	{
 		if (this.lastMessage != null)
 		{
@@ -171,7 +157,7 @@ public abstract class Task
 			
 			for (MessageEmbed embed : this.lastMessage.getEmbeds())
 			{
-				messageBuilder.setEmbed(embed);
+				messageBuilder.setEmbeds(embed);
 			}
 			
 			this.lastMessage.editMessage(messageBuilder.build()).queue();
@@ -237,15 +223,9 @@ public abstract class Task
 		return this.interactionGroup;
 	}
 	
-	public void setInteractionGroup(InteractionGroup interactionGroup)
-	{
-		this.interactionGroup = interactionGroup;
-	}
-	
 	public void clearInteractionGroup()
 	{
-		if (this.interactionGroup != null)
-			this.interactionGroup = null;
+		this.interactionGroup.clear();
 	}
 	
 	/**
@@ -255,15 +235,13 @@ public abstract class Task
 	{
 		MessageBuilder b = new MessageBuilder(event.getMessage());
 		b.setActionRows();
-		//b.append(event.getMessage().getContentDisplay());//.append("> La procedura è stata annullata.");
-		//this.getChannel().sendMessage(b.build()).queue();
-		this.running = false;
+		
+		this.setRunning(false);
 		
 		event.deferEdit().queue();
 		event.getHook().deleteOriginal().queue();
-		//event.getHook().editOriginal(b.build()).queue(); //Remove buttons from the original message.
 		
-		this.interactionGroup = null;
+		this.clearInteractionGroup();
 		return InteractionCallback.DELETE_MESSAGE;
 	};
 }

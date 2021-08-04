@@ -243,57 +243,60 @@ public class BotListener extends ListenerAdapter
 		if (task != null)
 		{
 			interactionGroup = task.getInteractionGroup();
+			InteractionCallback interactionCallback = interactionGroup.getComponentCallback(componendId);
 			
-			if (interactionGroup != null)
+			//Check if a callback was found.
+			if (interactionCallback == null)
 			{
-				InteractionCallback interactionCallback = interactionGroup.getComponentCallback(componendId);
+				logger.warn(SerpensBot.getMessage("botlistener_interaction_task_no_callback_error", componendId));
+				return;
+			}
+			
+			try
+			{
+				//Do button action.
+				boolean deleteMessage = interactionCallback.doAction(event);
+				//task.deleteButtons();
 				
-				try
+				//Delete message that has the clicked button if it should be deleted.
+				if (SerpensBot.getDeleteCommandMessages(guild.getId()) && deleteMessage)
 				{
-					//Do button action.
-					boolean deleteMessage = interactionCallback.doAction(event);
-					//task.deleteButtons();
-					
-					//Delete message that has the clicked button if it should be deleted.
-					if (SerpensBot.getDeleteCommandMessages(guild.getId()) && deleteMessage)
-					{
-						event.getHook().deleteOriginal().queue();
-					}
-					
-					//Remove the task if it finished.
-					if (!task.isRunning())
-					{
-						this.removeTask(guild.getId(), task);
-					}
+					event.getHook().deleteOriginal().queue();
 				}
-				catch (WrongInteractionEventException e)
+				
+				//Remove the task if it finished.
+				if (!task.isRunning())
 				{
-					//Abort task.
 					this.removeTask(guild.getId(), task);
-					
-					//Send error message.
-					String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
-					String embedDescription = SerpensBot.getMessage("botlistener_interaction_event_type_error", e.getInteractionId(), e.getExpected(), e.getFound());
-					Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
-					event.reply(message).setEphemeral(true).queue();
-					
-					//Log the error.
-					logger.error(e.getLocalizedMessage(), e);
 				}
-				catch (PermissionException e)
-				{
-					//Abort task.
-					this.removeTask(guild.getId(), task);
-					
-					//Send error message.
-					String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
-					String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
-					Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
-					event.reply(message).setEphemeral(true).queue();
-					
-					//Log the error.
-					logger.error(e.getLocalizedMessage(), e);
-				}
+			}
+			catch (WrongInteractionEventException e)
+			{
+				//Abort task.
+				this.removeTask(guild.getId(), task);
+				
+				//Send error message.
+				String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
+				String embedDescription = SerpensBot.getMessage("botlistener_interaction_event_type_error", e.getInteractionId(), e.getExpected(), e.getFound());
+				Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+				event.reply(message).setEphemeral(true).queue();
+				
+				//Log the error.
+				logger.error(e.getLocalizedMessage(), e);
+			}
+			catch (PermissionException e)
+			{
+				//Abort task.
+				this.removeTask(guild.getId(), task);
+				
+				//Send error message.
+				String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
+				String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
+				Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+				event.reply(message).setEphemeral(true).queue();
+				
+				//Log the error.
+				logger.error(e.getLocalizedMessage(), e);
 			}
 		}
 		else if (interactionGroup != null) //If no button group is found and the user hasn't got any task the user cannot press a button.
