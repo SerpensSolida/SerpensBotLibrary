@@ -22,7 +22,7 @@ public abstract class Task
 	private boolean running = true; //If the task is running or not.
 	private InteractionGroup interactionGroup = new InteractionGroup(); //Buttons that the user can press.
 	
-	public Task(Guild guild, User user, MessageChannel channel)
+	protected Task(Guild guild, User user, MessageChannel channel)
 	{
 		this.guild = guild;
 		this.user = user;
@@ -141,7 +141,7 @@ public abstract class Task
 		if (this.interactionGroup == null)
 			this.interactionGroup = new InteractionGroup();
 		
-		this.interactionGroup.addButtonCallback("cancel-task", this.CANCEL_BUTTON);
+		this.interactionGroup.addButtonCallback("cancel-task", this.cancelButtonAction);
 	}
 	
 	/**
@@ -231,7 +231,7 @@ public abstract class Task
 	/**
 	 * This is the default callback used by the "cancel" button to cancel the task.
 	 */
-	public final ButtonAction CANCEL_BUTTON = (event, guild, channel, message, author) ->
+	public final ButtonAction cancelButtonAction = (event, guild, channel, message, author) ->
 	{
 		MessageBuilder b = new MessageBuilder(event.getMessage());
 		b.setActionRows();

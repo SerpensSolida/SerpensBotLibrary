@@ -36,14 +36,12 @@ public class BotListener extends ListenerAdapter
 	private HashMap<String, HashMap<User, Task>> tasks = new HashMap<>(); //List of task currently running.
 	private HashMap<String, UnlistedBotCommand> unlistedBotCommands = new HashMap<>(); //List of commands of the module.
 	private LinkedHashMap<String, BotCommand> botCommands = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
-	//private HashMap<String, HashMap<String, ButtonGroup>> activeGlobalButtons = new HashMap<>();
 	private HashMap<String, HashMap<String, InteractionGroup>> activeGlobalInteractions = new HashMap<>();
 	
 	private static Logger logger = LoggerFactory.getLogger(BotListener.class);
 	
 	public BotListener(String modulePrefix)
 	{
-		//this.modulePrefix = modulePrefix;
 		this.internalID = modulePrefix;
 		
 		BotCommand command = new BotCommand("help", SerpensBot.getMessage("botlistener_command_help_desc"));
@@ -74,14 +72,14 @@ public class BotListener extends ListenerAdapter
 		Task task = this.getTask(guild.getId(), author);
 		
 		//If the author of the message is the bot, ignore the message.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
 			return;
 		
 		if (message.startsWith(commandPrefix) && !commandPrefix.equals(message.strip())) //The message is a command.
 		{
 			UnlistedBotCommand.CommandData data = UnlistedBotCommand.getCommandDataFromString(commandPrefix, message);
-			UnlistedBotCommand command = this.getUnlistedBotCommand(data.commandID);
-			String[] arguments = data.arguments;
+			UnlistedBotCommand command = this.getUnlistedBotCommand(data.getCommandID());
+			String[] arguments = data.getArguments();
 			
 			//Check if the command exists.
 			if (command == null)
@@ -93,7 +91,7 @@ public class BotListener extends ListenerAdapter
 			if (command.doJoinArguments() && arguments != null)
 			{
 				arguments = new String[1];
-				arguments[0] = String.join(" ", data.arguments);
+				arguments[0] = String.join(" ", data.getArguments());
 			}
 			
 			//Number of arguments sent with the message.
@@ -148,7 +146,7 @@ public class BotListener extends ListenerAdapter
 			return;
 		
 		//Ignore bot reaction.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
 			return;
 		
 		//Pass the reaction and the author to the task the user is running.
@@ -224,14 +222,13 @@ public class BotListener extends ListenerAdapter
 		String componendId = event.getComponentId();
 		User author = event.getUser(); //The user that added the reaction.
 		Guild guild = event.getGuild(); //The user that added the reaction.
-		MessageChannel channel = event.getChannel(); //Channel where the event occurred.
 		
 		//If this event is not from a guild ignore it.
 		if (guild == null)
 			return;
 		
 		//Ignore bot reaction.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
 			return;
 		
 		//Get the interacction that the user can interact with.
@@ -449,8 +446,7 @@ public class BotListener extends ListenerAdapter
 			
 		}
 		
-		//channel.sendMessage(new MessageBuilder().setEmbed(embedBuilder.build()).build()).queue();
-		event.reply(new MessageBuilder().setEmbed(embedBuilder.build()).build()).setEphemeral(false).queue();
+		event.reply(new MessageBuilder().setEmbeds(embedBuilder.build()).build()).setEphemeral(false).queue();
 	}
 	
 	/**
@@ -503,7 +499,6 @@ public class BotListener extends ListenerAdapter
 	{
 		if (command != null)
 		{
-			//command.setDefaultPrefix(this.internalID);
 			this.botCommands.put(command.getId(), command);
 		}
 	}
@@ -522,7 +517,7 @@ public class BotListener extends ListenerAdapter
 	{
 		if (command != null)
 		{
-			command.setDefaultPrefix(this.internalID);
+			command.setDefaultModulePrefix(this.internalID);
 			this.unlistedBotCommands.put(command.getId(), command);
 		}
 	}
@@ -539,11 +534,7 @@ public class BotListener extends ListenerAdapter
 	
 	public Task getTask(String guildID, User user)
 	{
-		if (!this.tasks.containsKey(guildID))
-		{
-			this.tasks.put(guildID, new HashMap<>());
-		}
-		
+		this.tasks.putIfAbsent(guildID, new HashMap<>());
 		return this.tasks.get(guildID).get(user);
 	}
 	
@@ -589,16 +580,15 @@ public class BotListener extends ListenerAdapter
 		if (currentUserTask != null)
 			this.removeTask(guildID, currentUserTask);
 		
-		if (!this.tasks.containsKey(guildID))
-			this.tasks.put(guildID, new HashMap<>());
+		//Create the guild map if absent.
+		this.tasks.putIfAbsent(guildID, new HashMap<>());
 		
 		this.tasks.get(guildID).put(user, task);
 	}
 	
 	protected void removeTask(String guildID, Task task)
 	{
-		if (!this.tasks.containsKey(guildID))
-			this.tasks.put(guildID, new HashMap<>());
+		this.tasks.putIfAbsent(guildID, new HashMap<>());
 		
 		this.tasks.get(guildID).remove(task.getUser());
 	}

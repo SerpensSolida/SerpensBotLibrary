@@ -4,5 +4,10 @@ import java.util.HashMap;
 
 public class AvatarData
 {
-	public HashMap<String, Avatar> avatars = new HashMap<>();
+	private final HashMap<String, Avatar> avatars = new HashMap<>();
+	
+	public HashMap<String, Avatar> getAvatars()
+	{
+		return this.avatars;
+	}
 }

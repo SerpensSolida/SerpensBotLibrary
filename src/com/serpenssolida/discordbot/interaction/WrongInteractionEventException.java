@@ -13,14 +13,14 @@ package com.serpenssolida.discordbot.interaction;
  */
 public class WrongInteractionEventException extends Exception
 {
-	private static String message = "Wrong type of interaction event found for interaction component with id \"%s\". Expected \"%s\", found \"%s\".";
+	private static final String MESSAGE = "Wrong type of interaction event found for interaction component with id \"%s\". Expected \"%s\", found \"%s\".";
 	private final String interactionId;
 	private final Class<?> expected;
 	private final Class<?> found;
 	
 	public WrongInteractionEventException(String interactionId, Class<?> expected, Class<?> found)
 	{
-	    super(String.format(message, interactionId, expected.getName(), found.getName()));
+	    super(String.format(WrongInteractionEventException.MESSAGE, interactionId, expected.getName(), found.getName()));
 		this.interactionId = interactionId;
 		this.expected = expected;
 		this.found = found;

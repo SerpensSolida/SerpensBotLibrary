@@ -41,7 +41,7 @@ public class LoggerListener extends BotListener
 		MessageChannel channel = event.getChannel(); //Channel where the message was sent.
 		
 		//If the author of the message is the bot, ignore the message.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
 			return;
 		
 		//Log the event.
@@ -64,7 +64,7 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Ignore bot reaction.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
 			return;
 		
 		//Log the event.
@@ -84,7 +84,7 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Ignore bot reaction.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId()))
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
 			return;
 		
 		//Log the event.

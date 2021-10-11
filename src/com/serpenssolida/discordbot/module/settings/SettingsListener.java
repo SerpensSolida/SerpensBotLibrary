@@ -104,7 +104,7 @@ public class SettingsListener extends BotListener
 				embedBuilder.addField(fieldTitle, fieldValue, true);
 			}
 			
-			messageBuilder.setEmbed(embedBuilder.build());
+			messageBuilder.setEmbeds(embedBuilder.build());
 		}
 		else if (argumentCount == 1 && moduleID != null)
 		{
@@ -164,7 +164,7 @@ public class SettingsListener extends BotListener
 			return;
 		}
 		
-		messageBuilder.setEmbed(embedBuilder.build());
+		messageBuilder.setEmbeds(embedBuilder.build());
 		event.reply(messageBuilder.build()).setEphemeral(false).queue();
 	}
 	
@@ -181,7 +181,7 @@ public class SettingsListener extends BotListener
 		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
 		{
 			embedBuilder.appendDescription(SerpensBot.getMessage("settings_permission_error"));
-			messageBuilder.setEmbed(embedBuilder.build());
+			messageBuilder.setEmbeds(embedBuilder.build());
 			
 			event.reply(messageBuilder.build()).setEphemeral(true).queue();
 			return;
@@ -191,7 +191,7 @@ public class SettingsListener extends BotListener
 		{
 			//Note: This code should be unreachable.
 			embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_symbol_missing_argument_error"));
-			messageBuilder.setEmbed(embedBuilder.build());
+			messageBuilder.setEmbeds(embedBuilder.build());
 			
 			event.reply(messageBuilder.build()).setEphemeral(true).queue();
 			return;
@@ -202,7 +202,7 @@ public class SettingsListener extends BotListener
 		if (newSymbol.length() > 6 || pattern.matcher(newSymbol).find())
 		{
 			embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_symbol_format_error"));
-			messageBuilder.setEmbed(embedBuilder.build());
+			messageBuilder.setEmbeds(embedBuilder.build());
 			
 			event.reply(messageBuilder.build()).setEphemeral(true).queue();
 			return;
@@ -212,7 +212,7 @@ public class SettingsListener extends BotListener
 		SerpensBot.saveSettings(guild.getId());
 		
 		embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_symbol_set_info", newSymbol));
-		messageBuilder.setEmbed(embedBuilder.build());
+		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		event.reply(messageBuilder.build()).setEphemeral(false).queue();
 	}

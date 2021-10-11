@@ -29,16 +29,18 @@ import java.util.*;
 
 public class SerpensBot
 {
-	public static JDA api;
-	public static HashMap<String, String> commandSymbol = new HashMap<>();
-	public static HashMap<String, Boolean> deleteCommandMessages = new HashMap<>();
-	public static String ownerId;
+	protected static final HashMap<String, String> commandSymbol = new HashMap<>();
+	protected static final HashMap<String, Boolean> deleteCommandMessages = new HashMap<>();
+	public static final String SETTINGS_FOLDER = "settings";
+	public static final ResourceBundle defaultLanguage = ResourceBundle.getBundle("SerpensBot");
 	
-	public static String settingsFolder = "settings";
-	public static ResourceBundle defaultLanguage = ResourceBundle.getBundle("SerpensBot");
-	public static ResourceBundle language;
+	private static JDA api;
+	private static ResourceBundle language;
+	private static String ownerId;
 	
-	private static Logger logger = LoggerFactory.getLogger(SerpensBot.class);
+	private static final Logger logger = LoggerFactory.getLogger(SerpensBot.class);
+	
+	private SerpensBot() {}
 	
 	public static void start()
 	{
@@ -75,6 +77,7 @@ public class SerpensBot
 		catch (InterruptedException e)
 		{
 			logger.error(e.getLocalizedMessage(), e);
+			Thread.currentThread().interrupt();
 			return;
 		}
 		
@@ -95,12 +98,28 @@ public class SerpensBot
 	}
 	
 	/**
+	 * @return The JDA api.
+	 */
+	public static JDA getApi()
+	{
+		return api;
+	}
+	
+	/**
 	 * Register a {@link BotListener}.
 	 * @param listener The {@link BotListener} to register.
 	 */
 	public static void addModule(BotListener listener)
 	{
 		SerpensBot.api.addEventListener(listener);
+	}
+	
+	/**
+	 * @return The user id of the owner of the bot.
+	 */
+	public static String getOwnerId()
+	{
+		return ownerId;
 	}
 	
 	/**
@@ -302,7 +321,7 @@ public class SerpensBot
 	 */
 	public static void loadSettings(String guildID)
 	{
-		File settingsFile = new File(Paths.get("server_data", guildID, SerpensBot.settingsFolder, "settings.json").toString());
+		File settingsFile = new File(Paths.get("server_data", guildID, SerpensBot.SETTINGS_FOLDER, "settings.json").toString());
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Guild guild = SerpensBot.api.getGuildById(guildID);
 		
@@ -364,7 +383,7 @@ public class SerpensBot
 	 */
 	public static void saveSettings(String guildID)
 	{
-		File settingsFile = new File(Paths.get("server_data", guildID, SerpensBot.settingsFolder, "settings.json").toString());
+		File settingsFile = new File(Paths.get("server_data", guildID, SerpensBot.SETTINGS_FOLDER, "settings.json").toString());
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Guild guild = SerpensBot.api.getGuildById(guildID);
 		

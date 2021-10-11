@@ -9,6 +9,8 @@ import java.awt.*;
 
 public class MessageUtils
 {
+	private MessageUtils() {}
+	
 	/**
 	 * Method used to generate simple embed error messages.
 	 *
@@ -28,9 +30,8 @@ public class MessageUtils
 		embedBuilder.setThumbnail("https://i.imgur.com/N5QySPm.png[/img]");
 		embedBuilder.setColor(Color.RED);
 		MessageBuilder messageBuilder = new MessageBuilder();
-		messageBuilder.setEmbed(embedBuilder.build());
+		messageBuilder.setEmbeds(embedBuilder.build());
 		
-		//		event.reply(messageBuilder.build()).setEphemeral(true).queue();
 		return messageBuilder.build();
 	}
 	
@@ -51,7 +52,7 @@ public class MessageUtils
 		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title, author);
 		embedBuilder.setDescription(description);
 		MessageBuilder messageBuilder = new MessageBuilder();
-		messageBuilder.setEmbed(embedBuilder.build());
+		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		return messageBuilder.build();
 	}
@@ -76,7 +77,7 @@ public class MessageUtils
 		embedBuilder.setDescription(description);
 		embedBuilder.setColor(color);
 		MessageBuilder messageBuilder = new MessageBuilder();
-		messageBuilder.setEmbed(embedBuilder.build());
+		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		return messageBuilder.build();
 	}
@@ -96,7 +97,7 @@ public class MessageUtils
 		
 		//Add footer
 		embedBuilder.setTitle(title);
-		embedBuilder.setAuthor(SerpensBot.api.getSelfUser().getName(), "https://github.com/SerpensSolida/SerpensBot", SerpensBot.api.getSelfUser().getAvatarUrl());
+		embedBuilder.setAuthor(SerpensBot.getApi().getSelfUser().getName(), "https://github.com/SerpensSolida/SerpensBot", SerpensBot.getApi().getSelfUser().getAvatarUrl());
 		
 		return embedBuilder;
 	}

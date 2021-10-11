@@ -15,6 +15,8 @@ public class AvatarCache
 {
 	private static Logger logger = LoggerFactory.getLogger(AvatarCache.class);
 	
+	private AvatarCache() {}
+	
 	/**
 	 * Get the give user's avatar from the cache.
 	 *
@@ -28,7 +30,7 @@ public class AvatarCache
 		try
 		{
 			AvatarData data = loadCache();
-			Avatar avatar = data.avatars.get(user.getAvatarId());
+			Avatar avatar = data.getAvatars().get(user.getAvatarId());
 			
 			if (avatar != null)
 			{
@@ -66,7 +68,7 @@ public class AvatarCache
 		ImageIO.write(bufferedAvatar, "png", file);
 		
 		Avatar avatar = new Avatar(user.getId(), user.getAvatarId(), user.getAvatarUrl(), file.getPath());
-		data.avatars.put(user.getAvatarId(), avatar);
+		data.getAvatars().put(user.getAvatarId(), avatar);
 		AvatarCache.saveCache(data);
 		
 		return bufferedAvatar;

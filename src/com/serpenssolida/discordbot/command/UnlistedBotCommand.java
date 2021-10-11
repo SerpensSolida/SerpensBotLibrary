@@ -15,17 +15,17 @@ import java.util.HashMap;
  */
 public class UnlistedBotCommand
 {
-	private String id; //ID of the command, used to identify unequivocally a command.
+	private final String id; //ID of the command, used to identify unequivocally a command.
 	private int maxArgumentNumber; //Max number of argument of the command.
 	private int minArgumentNumber; //Min number of argument of the command.
 	private boolean joinArguments; //Whether or not arguments are joined together before checking them.
 	private String help; //String that describe the command.
 	private String argumentsDescription; //String that describe arguments of the command.
-	private HashMap<String, String> modulePrefix = new HashMap<>(); //Prefix of the module that owns this command.
+	private final HashMap<String, String> modulePrefix = new HashMap<>(); //Prefix of the module that owns this command.
 	private UnlistedBotCommandAction action; //Callback that is called when the command is sent to the chat.
 	private String defaultModulePrefix; //Default module prefix.
 	
-	private static Logger logger = LoggerFactory.getLogger(BotCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(UnlistedBotCommand.class);
 	
 	public UnlistedBotCommand(String id, int maxArgumentNumber)
 	{
@@ -93,7 +93,6 @@ public class UnlistedBotCommand
 		if (arguments.length == 1 && arguments[0].isBlank())
 		{
 			//If there are no arguments return null.
-			//return null;
 			data.arguments = null;
 		}
 		
@@ -160,10 +159,8 @@ public class UnlistedBotCommand
 	
 	public String getModulePrefix(String guildID)
 	{
-		if (!this.modulePrefix.containsKey(guildID))
-		{
-			this.modulePrefix.put(guildID, this.defaultModulePrefix);
-		}
+		//Put default value if absent.
+		this.modulePrefix.putIfAbsent(guildID, this.defaultModulePrefix);
 		
 		return this.modulePrefix.get(guildID);
 	}
@@ -171,11 +168,6 @@ public class UnlistedBotCommand
 	public void setModulePrefix(String guildID, String modulePrefix)
 	{
 		this.modulePrefix.put(guildID, modulePrefix);
-	}
-	
-	public void setDefaultPrefix(String defaultModulePrefix)
-	{
-		this.defaultModulePrefix = defaultModulePrefix;
 	}
 	
 	public String getDefaultModulePrefix()
@@ -190,12 +182,32 @@ public class UnlistedBotCommand
 	
 	public static class CommandData
 	{
-		public String commandID;
-		public String[] arguments;
+		private String commandID;
+		private String[] arguments;
 		
 		public CommandData(String commandID, String[] arguments)
 		{
 			this.commandID = commandID;
+			this.arguments = arguments;
+		}
+		
+		public String getCommandID()
+		{
+			return this.commandID;
+		}
+		
+		public void setCommandID(String commandID)
+		{
+			this.commandID = commandID;
+		}
+		
+		public String[] getArguments()
+		{
+			return this.arguments;
+		}
+		
+		public void setArguments(String[] arguments)
+		{
 			this.arguments = arguments;
 		}
 	}

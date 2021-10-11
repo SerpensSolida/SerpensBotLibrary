@@ -19,7 +19,6 @@ public class BaseListener extends BotListener
 	{
 		super("base");
 		this.setModuleName("Base");
-		//this.setModulePrefix(guildID, "");
 		
 		//Module has no tasks and cannot get help.
 		this.getBotCommands().clear();
@@ -49,7 +48,7 @@ public class BaseListener extends BotListener
 		MessageChannel channel = event.getChannel(); //Channel where the message was sent.
 		
 		//If the author of the message is the bot, ignore the message.
-		if (SerpensBot.api.getSelfUser().getId().equals(author.getId())) return;
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId())) return;
 		
 		//Parse special commands.
 		if ("!!reset symbol".equals(message))
@@ -68,7 +67,7 @@ public class BaseListener extends BotListener
 		if (!"help".equals(event.getName()))
 			return;
 		
-		this.sendModuleHelp(event, event.getGuild(), event.getChannel(), event.getUser());
+		this.sendModuleHelp(event, event.getGuild(), event.getUser());
 	}
 	
 	/**
@@ -123,7 +122,7 @@ public class BaseListener extends BotListener
 	/**
 	 * Send a message containing all help commands of the modules.
 	 */
-	private void sendModuleHelp(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
+	private void sendModuleHelp(SlashCommandEvent event, Guild guild, User author)
 	{
 		MessageBuilder messageBuilder = new MessageBuilder();
 		
@@ -136,10 +135,6 @@ public class BaseListener extends BotListener
 		//Add module list to the embed.
 		for (BotListener listener : SerpensBot.getModules())
 		{
-			/*//Don't add this listener to the list.
-			if (listener instanceof BaseListener)
-				continue;*/
-			
 			String modulePrefix = listener.getModulePrefix(guild.getId());
 			
 			if (modulePrefix.isBlank())
@@ -153,7 +148,7 @@ public class BaseListener extends BotListener
 		embedBuilder.addField(SerpensBot.getMessage("base_command_help_command_field_title"), builderList.toString(), true);
 		embedBuilder.addField(SerpensBot.getMessage("base_command_help_help_field_title"), builderCommands.toString(), true);
 		
-		messageBuilder.setEmbed(embedBuilder.build());
+		messageBuilder.setEmbeds(embedBuilder.build());
 		event.reply(messageBuilder.build()).setEphemeral(false).queue();
 	}
 	

@@ -1,12 +1,13 @@
 package com.serpenssolida.discordbot.avatar;
-
-public class Avatar {
-  public String ownerID;
-  public String url;
-  public String id;
-  public String file;
+public class Avatar
+{
+  public final String ownerID;
+  public final String url;
+  public final String id;
+  public final String file;
   
-  public Avatar(String ownerID, String id, String url, String file) {
+  public Avatar(String ownerID, String id, String url, String file)
+  {
     this.file = file;
     this.url = url;
     this.id = id;

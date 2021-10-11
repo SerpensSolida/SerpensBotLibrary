@@ -1,7 +1,6 @@
 package com.serpenssolida.discordbot.interaction;
 
 import com.serpenssolida.discordbot.SerpensBot;
-import com.serpenssolida.discordbot.command.BotCommand;
 import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +13,10 @@ public class InteractionCallback
 	private String id;
 	private InteractionAction action;
 	
-	public static boolean DELETE_MESSAGE = true;
-	public static boolean LEAVE_MESSAGE = false;
+	public static final boolean DELETE_MESSAGE = true;
+	public static final boolean LEAVE_MESSAGE = false;
 	
-	private static Logger logger = LoggerFactory.getLogger(BotCommand.class);
+	private static final Logger logger = LoggerFactory.getLogger(InteractionCallback.class);
 	
 	public InteractionCallback(String id, InteractionAction action)
 	{
