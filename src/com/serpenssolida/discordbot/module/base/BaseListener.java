@@ -6,9 +6,11 @@ import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -68,6 +70,12 @@ public class BaseListener extends BotListener
 			return;
 		
 		this.sendModuleHelp(event, event.getGuild(), event.getUser());
+	}
+	
+	@Override
+	public void onGuildJoin(@NotNull GuildJoinEvent event)
+	{
+		SerpensBot.updateGuildCommands(event.getGuild());
 	}
 	
 	/**
