@@ -255,14 +255,14 @@ public class SettingsListener extends BotListener
 		//Check in the user has permission to run this command.
 		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author, SerpensBot.getMessage("settings_permission_error"));
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_permission_error"));
 			event.reply(message).setEphemeral(true).queue();
 			return;
 		}
 		
 		if (moduleNameArg == null || stateArg == null)
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author, SerpensBot.getMessage("settings_command_deletecommand_missing_value_error"));
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_command_deletecommand_missing_value_error"));
 			event.reply(message).setEphemeral(true).queue();
 			return;
 		}
