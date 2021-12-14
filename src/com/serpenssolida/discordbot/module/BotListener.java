@@ -30,13 +30,14 @@ import java.util.LinkedHashMap;
 
 public class BotListener extends ListenerAdapter
 {
-	private HashMap<String, String> modulePrefix = new HashMap<>(); //Prefix of the module, used for commands.
 	private String internalID = ""; //Internal id used for retrieving listeners from the list.
 	private String moduleName = ""; //Readable name of the module.
-	private HashMap<String, HashMap<User, Task>> tasks = new HashMap<>(); //List of task currently running.
-	private HashMap<String, UnlistedBotCommand> unlistedBotCommands = new HashMap<>(); //List of commands of the module.
-	private LinkedHashMap<String, BotCommand> botCommands = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
-	private HashMap<String, HashMap<String, InteractionGroup>> activeGlobalInteractions = new HashMap<>();
+	private final HashMap<String, String> modulePrefix = new HashMap<>(); //Prefix of the module, used for commands.
+	private final HashMap<String, Boolean> enabled = new HashMap<>(); //Whether the module is enabled or not.
+	private final HashMap<String, HashMap<User, Task>> tasks = new HashMap<>(); //List of task currently running.
+	private final HashMap<String, UnlistedBotCommand> unlistedBotCommands = new HashMap<>(); //List of commands of the module.
+	private final LinkedHashMap<String, BotCommand> botCommands = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
+	private final HashMap<String, HashMap<String, InteractionGroup>> activeGlobalInteractions = new HashMap<>();
 	
 	private static Logger logger = LoggerFactory.getLogger(BotListener.class);
 	
@@ -450,6 +451,15 @@ public class BotListener extends ListenerAdapter
 	}
 	
 	/**
+	 * Whether or not the module can be disabled.
+	 * @return True if the module can be deactivated, false otherwise.
+	 */
+	public boolean canBeDisabled()
+	{
+		return true;
+	}
+	
+	/**
 	 * Sets the prefix of the module for the given guild.
 	 *
 	 * @param guildID
@@ -461,9 +471,7 @@ public class BotListener extends ListenerAdapter
 	{
 		//Change unlisted command prefix.
 		for (UnlistedBotCommand command : this.unlistedBotCommands.values())
-		{
 			command.setModulePrefix(guildID, modulePrefix);
-		}
 		
 		this.modulePrefix.put(guildID, modulePrefix);
 	}
@@ -488,6 +496,86 @@ public class BotListener extends ListenerAdapter
 		}
 		
 		return this.modulePrefix.get(guildID);
+	}
+	
+	/**
+	 * Get the module prefix of the module for the given guild, if not entry is found it will initialize it to
+	 * the default value.
+	 *
+	 * @param guildID
+	 * 		The id of the guild.
+	 *
+	 * @return
+	 * 		The prefix of the module for the given guild.
+	 */
+	public String getModulePrefixOrDefault(String guildID)
+	{
+		if (!this.modulePrefix.containsKey(guildID))
+			this.modulePrefix.put(guildID, this.internalID);
+		
+		return this.modulePrefix.get(guildID);
+	}
+	
+	/**
+	 * Enable or disable the module for the guild with the given id.
+	 *
+	 * @param guildID
+	 * 		The id of the guild.
+	 * @param enabled
+	 * 		True to enable the module, false to disable it.
+	 */
+	public void setEnabled(String guildID, boolean enabled)
+	{
+		if (!this.modulePrefix.containsKey(guildID))
+		{
+			SerpensBot.loadSettings(guildID); //Try loading the settings.
+			
+			if (!this.enabled.containsKey(guildID)) //Settings for this guild not found.
+				this.enabled.put(guildID, true);
+		}
+		
+		//Enable/disable the module.
+		this.enabled.put(guildID, enabled);
+	}
+	
+	/**
+	 * Get the state of the module for the given guild.
+	 *
+	 * @param guildID
+	 * 		The id of the guild.
+	 *
+	 * @return
+	 * 		True if the module is enabled, false otherwise.
+	 */
+	public boolean isEnabled(String guildID)
+	{
+		if (!this.enabled.containsKey(guildID))
+		{
+			SerpensBot.loadSettings(guildID); //Try loading the settings.
+			
+			if (!this.enabled.containsKey(guildID)) //Settings for this guild not found.
+				this.enabled.put(guildID, true);
+		}
+		
+		return this.enabled.get(guildID);
+	}
+	
+	/**
+	 * Get the state of the module for the given guild, if no entry is found it will
+	 * initialize it to the default value.
+	 *
+	 * @param guildID
+	 * 		The id of the guild.
+	 *
+	 * @return
+	 * 		True if the module is enabled, false otherwise.
+	 */
+	public boolean isEnabledOrDefault(String guildID)
+	{
+		if (!this.enabled.containsKey(guildID))
+			this.enabled.put(guildID, true);
+		
+		return this.enabled.get(guildID);
 	}
 	
 	public String getInternalID()

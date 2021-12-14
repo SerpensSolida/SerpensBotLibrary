@@ -128,9 +128,7 @@ public class SerpensBot
 	public static void updateAllGuildsCommands()
 	{
 		for (Guild guild : api.getGuilds())
-		{
 			SerpensBot.updateGuildCommands(guild);
-		}
 	}
 	
 	/**
@@ -148,10 +146,11 @@ public class SerpensBot
 			{
 				BotListener listener = (BotListener) registeredListener;
 				
+				if (!listener.isEnabledOrDefault(guild.getId()))
+					return;
+				
 				for (CommandData commandData : listener.generateCommands(guild))
-				{
 					commands.addCommands(commandData);
-				}
 			}
 		}
 		
@@ -337,17 +336,15 @@ public class SerpensBot
 			SerpensBot.commandSymbol.put(guildID, settingsData.getCommandSymbol());
 			SerpensBot.deleteCommandMessages.put(guildID, settingsData.getDeleteCommandMessages());
 			HashMap<String, String> modulePrefixes = settingsData.getModulePrefixes();
+			HashMap<String, Boolean> moduleStates = settingsData.getModuleStates();
 			
 			for (BotListener listener : SerpensBot.getModules())
 			{
-				if (modulePrefixes.containsKey(listener.getInternalID()))
-				{
-					listener.setModulePrefix(guildID, modulePrefixes.get(listener.getInternalID()));
-				}
-				else
-				{
-					listener.setModulePrefix(guildID, listener.getInternalID()); //Reset listener if key is not found.
-				}
+				//Set listener prefix, if the key is not found set it to the default value.
+				listener.setModulePrefix(guildID, modulePrefixes.getOrDefault(listener.getInternalID(), listener.getInternalID()));
+				
+				//Set listener state, if the key is not found set it to the default value.
+				listener.setEnabled(guildID, moduleStates.getOrDefault(listener.getInternalID(), true));
 			}
 			
 			SerpensBot.updateGuildCommands(guild);
@@ -392,25 +389,29 @@ public class SerpensBot
 		
 		logger.info(SerpensBot.getMessage("saving_guild_settings", guild.getName()));
 		
+		//Init data containers.
+		SettingsData settingsData = new SettingsData();
+		HashMap<String, String> modulePrefixes = new HashMap<>();
+		HashMap<String, Boolean> moduleStates = new HashMap<>();
+		
+		//Add command symbol.
+		settingsData.setCommandSymbol(SerpensBot.getCommandSymbol(guildID));
+		
+		//Add list of prefixes and states.
+		for (BotListener listener : SerpensBot.getModules())
+		{
+			modulePrefixes.put(listener.getInternalID(), listener.getModulePrefixOrDefault(guildID));
+			moduleStates.put(listener.getInternalID(), listener.isEnabledOrDefault(guildID));
+		}
+		
+		settingsData.setModulePrefixes(modulePrefixes);
+		settingsData.setModuleStates(moduleStates);
+		
+		//Add delete command messages flag.
+		settingsData.setDeleteCommandMessages(SerpensBot.getDeleteCommandMessages(guildID));
+		
 		try (PrintWriter writer = new PrintWriter(new FileWriter(settingsFile)))
 		{
-			SettingsData settingsData = new SettingsData();
-			HashMap<String, String> modulePrefixes = new HashMap<>();
-			
-			//Add command symbol.
-			settingsData.setCommandSymbol(SerpensBot.getCommandSymbol(guildID));
-			
-			//Add list of prefixes
-			for (BotListener listener : SerpensBot.getModules())
-			{
-				modulePrefixes.put(listener.getInternalID(), listener.getModulePrefix(guildID));
-			}
-			
-			settingsData.setModulePrefixes(modulePrefixes);
-			
-			//Add delete command messages flag.
-			settingsData.setDeleteCommandMessages(SerpensBot.getDeleteCommandMessages(guildID));
-			
 			writer.println(gson.toJson(settingsData));
 		}
 		catch (FileNotFoundException e)
@@ -468,9 +469,7 @@ public class SerpensBot
 	{
 		//If key is not found the settings are not loaded or are not created.
 		if (!SerpensBot.commandSymbol.containsKey(guildID))
-		{
 			SerpensBot.loadSettings(guildID);
-		}
 		
 		return SerpensBot.commandSymbol.get(guildID);
 	}
@@ -487,9 +486,7 @@ public class SerpensBot
 	{
 		//If key is not found the settings are not loaded or are not created.
 		if (!SerpensBot.deleteCommandMessages.containsKey(guildID))
-		{
 			SerpensBot.loadSettings(guildID);
-		}
 		
 		SerpensBot.deleteCommandMessages.put(guildID, value);
 	}

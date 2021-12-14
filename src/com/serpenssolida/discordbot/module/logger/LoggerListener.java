@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 
 public class LoggerListener extends BotListener
 {
-	private static Logger logger = LoggerFactory.getLogger(LoggerListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerListener.class);
 	
 	public LoggerListener()
 	{

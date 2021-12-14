@@ -7,6 +7,7 @@ public class SettingsData
 	private String commandSymbol;
 	private boolean deleteCommandMessages;
 	private HashMap<String, String> modulePrefixes = new HashMap<>();
+	private HashMap<String, Boolean> moduleStates = new HashMap<>();
 	
 	public HashMap<String, String> getModulePrefixes()
 	{
@@ -16,6 +17,16 @@ public class SettingsData
 	public void setModulePrefixes(HashMap<String, String> modulePrefixes)
 	{
 		this.modulePrefixes = modulePrefixes;
+	}
+	
+	public HashMap<String, Boolean> getModuleStates()
+	{
+		return this.moduleStates;
+	}
+	
+	public void setModuleStates(HashMap<String, Boolean> moduleStates)
+	{
+		this.moduleStates = moduleStates;
 	}
 	
 	public String getCommandSymbol()

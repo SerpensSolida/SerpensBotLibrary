@@ -1,7 +1,7 @@
 package com.serpenssolida.discordbot.module.settings;
 
-import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.MessageUtils;
+import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.command.BotCommand;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -32,19 +32,33 @@ public class SettingsListener extends BotListener
 		command = new BotCommand("prefix", SerpensBot.getMessage("settings_command_prefix_desc"));
 		command.setAction(this::modulePrefixCommand);
 		command.getSubcommand()
-				.addOptions(new OptionData(OptionType.STRING, "module_name", SerpensBot.getMessage("settings_command_prefix_param1"), false).setRequired(false))
+				.addOptions(new OptionData(OptionType.STRING, "module_id", SerpensBot.getMessage("settings_command_prefix_param1"), false))
 				.addOption(OptionType.STRING, "new_prefix", SerpensBot.getMessage("settings_command_prefix_param2"), false);
 		this.addBotCommand(command);
 		
-		//Command for changing the module prefix of a module.
+		//Command for setting the deletecommand flag.
 		command = new BotCommand("deletecommand", SerpensBot.getMessage("settings_command_deletecommand_desc"));
 		command.setAction(this::setDeleteCommandMessages);
 		command.getSubcommand()
 				.addOption(OptionType.BOOLEAN, "value", SerpensBot.getMessage("settings_command_deletecommand_param1"), true);
 		this.addBotCommand(command);
 		
+		//Command for enabling or disabling a module.
+		command = new BotCommand("modulestate", SerpensBot.getMessage("settings_command_modulestate_desc"));
+		command.setAction(this::moduleStateCommand);
+		command.getSubcommand()
+				.addOptions(new OptionData(OptionType.STRING, "module_id", SerpensBot.getMessage("settings_command_prefix_param1"), true))
+				.addOptions(new OptionData(OptionType.BOOLEAN, "enabled", "settings_command_modulestate_param1", true));
+		this.addBotCommand(command);
+		
 		//This listener does not create any tasks so there is non need for a "cancel" command.
 		this.removeBotCommand("cancel");
+	}
+	
+	@Override
+	public boolean canBeDisabled()
+	{
+		return false;
 	}
 	
 	private void setDeleteCommandMessages(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
@@ -74,14 +88,15 @@ public class SettingsListener extends BotListener
 		SerpensBot.setDeleteCommandMessages(guild.getId(), value);
 		SerpensBot.saveSettings(guild.getId());
 		
-		String description = (value ? SerpensBot.getMessage("settings_command_deletecommand_delete_info") : SerpensBot.getMessage("settings_command_deletecommand_leave_info"));
+		String description = SerpensBot.getMessage(value ? "settings_command_deletecommand_delete_info" : "settings_command_deletecommand_leave_info");
 		Message message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author,  description);
 		event.reply(message).setEphemeral(false).queue(); //Set ephemeral if the user didn't put the argument.
 	}
 	
 	private void modulePrefixCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
 	{
-		OptionMapping moduleID = event.getOption("module_name"); //Module id passed to the command.
+		String guildID = guild.getId();;
+		OptionMapping moduleID = event.getOption("module_id"); //Module id passed to the command.
 		OptionMapping modulePrefix = event.getOption("new_prefix"); //Module prefix passed to the command.
 		
 		Member authorMember = guild.retrieveMember(author).complete(); //Member that sent the command.
@@ -100,7 +115,7 @@ public class SettingsListener extends BotListener
 			for (BotListener listener : SerpensBot.getModules())
 			{
 				String fieldTitle = SerpensBot.getMessage("settings_command_prefix_list_field_title", listener.getModuleName());
-				String fieldValue = SerpensBot.getMessage("settings_command_prefix_list_field_value", listener.getInternalID(), listener.getModulePrefix(guild.getId()).isBlank() ? " " : listener.getModulePrefix(guild.getId()));
+				String fieldValue = SerpensBot.getMessage("settings_command_prefix_list_field_value", listener.getInternalID(), listener.getModulePrefix(guildID).isBlank() ? " " : listener.getModulePrefix(guildID), listener.isEnabled(guildID));
 				embedBuilder.addField(fieldTitle, fieldValue, true);
 			}
 			
@@ -119,7 +134,7 @@ public class SettingsListener extends BotListener
 				return;
 			}
 			
-			embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_prefix_prefix_info", listener.getModuleName(), listener.getModulePrefix(guild.getId())));
+			embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_prefix_prefix_info", listener.getModuleName(), listener.getModulePrefix(guildID)));
 		}
 		else if (argumentCount == 2 && moduleID != null && modulePrefix != null)
 		{
@@ -150,12 +165,23 @@ public class SettingsListener extends BotListener
 				return;
 			}
 			
-			//Set the new prefix to the module.
-			listener.setModulePrefix(guild.getId(), newPrefix);
-			SerpensBot.updateGuildCommands(guild);
-			SerpensBot.saveSettings(guild.getId());
+			//Check if prefix is unique
+			for (BotListener module : SerpensBot.getModules())
+			{
+				if (newPrefix.equals(module.getModulePrefix(guildID)))
+				{
+					Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_module_prefix_not_unique_error", newPrefix));
+					event.reply(message).setEphemeral(true).queue();
+					return;
+				}
+			}
 			
-			embedBuilder.setDescription(SerpensBot.getMessage("settings_command_prefix_set_info", listener.getInternalID(), listener.getModulePrefix(guild.getId())));
+			//Set the new prefix to the module.
+			listener.setModulePrefix(guildID, newPrefix);
+			SerpensBot.updateGuildCommands(guild);
+			SerpensBot.saveSettings(guildID);
+			
+			embedBuilder.setDescription(SerpensBot.getMessage("settings_command_prefix_set_info", listener.getInternalID(), listener.getModulePrefix(guildID)));
 		}
 		else
 		{
@@ -217,4 +243,58 @@ public class SettingsListener extends BotListener
 		event.reply(messageBuilder.build()).setEphemeral(false).queue();
 	}
 	
+	private void moduleStateCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
+	{
+		Member authorMember = guild.retrieveMember(author).complete();
+		String guildID = guild.getId();
+		
+		//Argument parsing.
+		OptionMapping moduleNameArg = event.getOption("module_id");
+		OptionMapping stateArg = event.getOption("enabled");
+		
+		//Check in the user has permission to run this command.
+		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
+		{
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author, SerpensBot.getMessage("settings_permission_error"));
+			event.reply(message).setEphemeral(true).queue();
+			return;
+		}
+		
+		if (moduleNameArg == null || stateArg == null)
+		{
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author, SerpensBot.getMessage("settings_command_deletecommand_missing_value_error"));
+			event.reply(message).setEphemeral(true).queue();
+			return;
+		}
+		
+		//Update option.
+		String moduleID = moduleNameArg.getAsString();
+		boolean enabled = stateArg.getAsBoolean();
+		BotListener listener = SerpensBot.getModuleById(moduleID);
+		
+		//Print the result.
+		if (listener == null)
+		{
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_module_not_found_error", moduleID));
+			event.reply(message).setEphemeral(true).queue();
+			return;
+		}
+		
+		//Check if module can be deactivated.
+		if (!listener.canBeDisabled())
+		{
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_module_undeactivatable_error", moduleID));
+			event.reply(message).setEphemeral(true).queue();
+			return;
+		}
+		
+		//Set module state.
+		listener.setEnabled(guildID, enabled);
+		SerpensBot.updateGuildCommands(guild);
+		SerpensBot.saveSettings(guildID);
+		
+		String description = SerpensBot.getMessage(enabled ? "settings_command_modulestate_enabled_info" : "settings_command_modulestate_disabled_info", moduleID);
+		Message message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author,  description);
+		event.reply(message).setEphemeral(false).queue(); //Set ephemeral if the user didn't put the argument.
+	}
 }
