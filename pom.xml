@@ -8,7 +8,7 @@
 
     <groupId>com.serpenssolida.discordbot</groupId>
     <artifactId>serpensbot-library</artifactId>
-    <version>1.1.10</version>
+    <version>1.1.11</version>
 
     <build>
         <sourceDirectory>src</sourceDirectory>
