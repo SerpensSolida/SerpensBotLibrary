@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * This class represent the group of interaction callback linked to components of a message.
  *
- * <p>InteractionGroup usually are registered to a {@link com.serpenssolida.discordbot.module.Task} or a {@link com.serpenssolida.discordbot.module.BotListener}
+ * <p>InteractionGroup usually are registered to a {@link com.serpenssolida.discordbot.module.BotListener}
  * and when registered they are linked to a message. The InteractionGroup when registered must contain <u>all</u> {@link InteractionCallback}
  * of the component of the message, if not the interaction can fail in unexpected ways.</p>
  */

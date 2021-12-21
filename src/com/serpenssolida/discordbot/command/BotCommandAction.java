@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
- * Used by {@link UnlistedBotCommand} as callback when the command is used in a chat.
+ * Used by {@link BotCommand} as callback when the command is used in a chat.
  */
 public interface BotCommandAction
 {

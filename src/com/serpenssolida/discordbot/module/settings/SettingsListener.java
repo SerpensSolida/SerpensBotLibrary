@@ -7,40 +7,30 @@ import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.regex.Pattern;
+import java.util.HashSet;
 
 public class SettingsListener extends BotListener
 {
+	private final HashSet<String> loadedGuilds = new HashSet<>();
+	
 	public SettingsListener()
 	{
 		super("settings");
 		this.setModuleName("Settings");
 		
-		//Command for changing the symbol for calling a command.
-		BotCommand command = new BotCommand("symbol", SerpensBot.getMessage("settings_command_symbol_desc"));
-		command.setAction(this::setUnlistedBotCommandSymbol);
-		command.getSubcommand()
-				.addOption(OptionType.STRING, "value", "Il nuovo simbolo da impostare per i comandi non listati.", true);
-		this.addBotCommand(command);
-		
 		//Command for changing the module prefix of a module.
-		command = new BotCommand("prefix", SerpensBot.getMessage("settings_command_prefix_desc"));
+		BotCommand command = new BotCommand("prefix", SerpensBot.getMessage("settings_command_prefix_desc"));
 		command.setAction(this::modulePrefixCommand);
 		command.getSubcommand()
 				.addOptions(new OptionData(OptionType.STRING, "module_id", SerpensBot.getMessage("settings_command_prefix_param1"), false))
 				.addOption(OptionType.STRING, "new_prefix", SerpensBot.getMessage("settings_command_prefix_param2"), false);
-		this.addBotCommand(command);
-		
-		//Command for setting the deletecommand flag.
-		command = new BotCommand("deletecommand", SerpensBot.getMessage("settings_command_deletecommand_desc"));
-		command.setAction(this::setDeleteCommandMessages);
-		command.getSubcommand()
-				.addOption(OptionType.BOOLEAN, "value", SerpensBot.getMessage("settings_command_deletecommand_param1"), true);
 		this.addBotCommand(command);
 		
 		//Command for enabling or disabling a module.
@@ -61,36 +51,16 @@ public class SettingsListener extends BotListener
 		return false;
 	}
 	
-	private void setDeleteCommandMessages(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
+	@Override
+	public void onGenericGuild(@NotNull GenericGuildEvent event)
 	{
-		Member authorMember = guild.retrieveMember(author).complete();
+		String guildID = event.getGuild().getId();
 		
-		//Argument parsing.
-		OptionMapping valueArg = event.getOption("value");
-		
-		//Check in the user has permission to run this command.
-		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
+		if (!this.loadedGuilds.contains(guildID))
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author, SerpensBot.getMessage("settings_permission_error"));
-			event.reply(message).setEphemeral(true).queue();
-			return;
+			SerpensBot.loadSettings(guildID);
+			this.loadedGuilds.add(guildID);
 		}
-		
-		if (valueArg == null)
-		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author, SerpensBot.getMessage("settings_command_deletecommand_missing_value_error"));
-			event.reply(message).setEphemeral(true).queue();
-			return;
-		}
-		
-		//Update option.
-		boolean value = valueArg.getAsBoolean();
-		SerpensBot.setDeleteCommandMessages(guild.getId(), value);
-		SerpensBot.saveSettings(guild.getId());
-		
-		String description = SerpensBot.getMessage(value ? "settings_command_deletecommand_delete_info" : "settings_command_deletecommand_leave_info");
-		Message message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("settings_command_deletecommand_title"), author,  description);
-		event.reply(message).setEphemeral(false).queue(); //Set ephemeral if the user didn't put the argument.
 	}
 	
 	private void modulePrefixCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
@@ -191,55 +161,6 @@ public class SettingsListener extends BotListener
 		}
 		
 		messageBuilder.setEmbeds(embedBuilder.build());
-		event.reply(messageBuilder.build()).setEphemeral(false).queue();
-	}
-	
-	private void setUnlistedBotCommandSymbol(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
-	{
-		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(SerpensBot.getMessage("settings_command_symbol_title"), author);
-		MessageBuilder messageBuilder = new MessageBuilder();
-		OptionMapping newSymbolOption = event.getOption("value");
-		Member authorMember = guild.retrieveMember(author).complete();
-
-		Pattern pattern = Pattern.compile("[_*~>`@]"); //Regex containing illegal characters.
-
-		//Check in the user has permission to run this command.
-		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
-		{
-			embedBuilder.appendDescription(SerpensBot.getMessage("settings_permission_error"));
-			messageBuilder.setEmbeds(embedBuilder.build());
-			
-			event.reply(messageBuilder.build()).setEphemeral(true).queue();
-			return;
-		}
-		
-		if (newSymbolOption == null)
-		{
-			//Note: This code should be unreachable.
-			embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_symbol_missing_argument_error"));
-			messageBuilder.setEmbeds(embedBuilder.build());
-			
-			event.reply(messageBuilder.build()).setEphemeral(true).queue();
-			return;
-		}
-		
-		//Check if the command symbol is suitable
-		String newSymbol = newSymbolOption.getAsString();
-		if (newSymbol.length() > 6 || pattern.matcher(newSymbol).find())
-		{
-			embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_symbol_format_error"));
-			messageBuilder.setEmbeds(embedBuilder.build());
-			
-			event.reply(messageBuilder.build()).setEphemeral(true).queue();
-			return;
-		}
-		
-		SerpensBot.setCommandSymbol(guild.getId(), newSymbol);
-		SerpensBot.saveSettings(guild.getId());
-		
-		embedBuilder.appendDescription(SerpensBot.getMessage("settings_command_symbol_set_info", newSymbol));
-		messageBuilder.setEmbeds(embedBuilder.build());
-		
 		event.reply(messageBuilder.build()).setEphemeral(false).queue();
 	}
 	

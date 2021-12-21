@@ -29,8 +29,6 @@ import java.util.*;
 
 public class SerpensBot
 {
-	protected static final HashMap<String, String> commandSymbol = new HashMap<>();
-	protected static final HashMap<String, Boolean> deleteCommandMessages = new HashMap<>();
 	public static final String SETTINGS_FOLDER = "settings";
 	public static final ResourceBundle defaultLanguage = ResourceBundle.getBundle("SerpensBot");
 	
@@ -333,8 +331,6 @@ public class SerpensBot
 		{
 			SettingsData settingsData = gson.fromJson(reader, SettingsData.class);
 			
-			SerpensBot.commandSymbol.put(guildID, settingsData.getCommandSymbol());
-			SerpensBot.deleteCommandMessages.put(guildID, settingsData.getDeleteCommandMessages());
 			HashMap<String, String> modulePrefixes = settingsData.getModulePrefixes();
 			HashMap<String, Boolean> moduleStates = settingsData.getModuleStates();
 			
@@ -355,13 +351,8 @@ public class SerpensBot
 			logger.info(SerpensBot.getMessage("guild_settings_file_creation", guild.getName()));
 			
 			//Initialize default values.
-			SerpensBot.commandSymbol.put(guildID, "/");
-			SerpensBot.deleteCommandMessages.put(guildID, false);
-			
 			for (BotListener module : getModules())
-			{
 				module.setModulePrefix(guildID, module.getInternalID());
-			}
 			
 			SerpensBot.saveSettings(guildID);
 		}
@@ -394,9 +385,6 @@ public class SerpensBot
 		HashMap<String, String> modulePrefixes = new HashMap<>();
 		HashMap<String, Boolean> moduleStates = new HashMap<>();
 		
-		//Add command symbol.
-		settingsData.setCommandSymbol(SerpensBot.getCommandSymbol(guildID));
-		
 		//Add list of prefixes and states.
 		for (BotListener listener : SerpensBot.getModules())
 		{
@@ -406,9 +394,6 @@ public class SerpensBot
 		
 		settingsData.setModulePrefixes(modulePrefixes);
 		settingsData.setModuleStates(moduleStates);
-		
-		//Add delete command messages flag.
-		settingsData.setDeleteCommandMessages(SerpensBot.getDeleteCommandMessages(guildID));
 		
 		try (PrintWriter writer = new PrintWriter(new FileWriter(settingsFile)))
 		{
@@ -435,79 +420,5 @@ public class SerpensBot
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
-	}
-	
-	/**
-	 * Set the unlisted command symbol for the given guild.
-	 *
-	 * @param guildID
-	 * 		The id of the guild.
-	 * @param symbol
-	 * 		The symbol that will be used for unlisted commands.
-	 */
-	public static void setCommandSymbol(String guildID, String symbol)
-	{
-		//If key is not found the settings are not loaded or are not created.
-		if (!SerpensBot.commandSymbol.containsKey(guildID))
-		{
-			SerpensBot.loadSettings(guildID);
-		}
-		
-		SerpensBot.commandSymbol.put(guildID, symbol);
-	}
-	
-	/**
-	 * Get the current unlisted command symbol for the given guild.
-	 *
-	 * @param guildID
-	 * 		The id of the guild.
-	 *
-	 * @return
-	 * 		The symbol used for unlisted commands of the given guild.
-	 */
-	public static String getCommandSymbol(String guildID)
-	{
-		//If key is not found the settings are not loaded or are not created.
-		if (!SerpensBot.commandSymbol.containsKey(guildID))
-			SerpensBot.loadSettings(guildID);
-		
-		return SerpensBot.commandSymbol.get(guildID);
-	}
-	
-	/**
-	 * Set the flag for deleting messsage after an unlisted command sent in the given guild.
-	 *
-	 * @param guildID
-	 * 		The id of the guild.
-	 * @param value
-	 *		If set to true the bot will delete message when receiving an unlisted command, false will instead do the opposite.
-	 */
-	public static void setDeleteCommandMessages(String guildID, boolean value)
-	{
-		//If key is not found the settings are not loaded or are not created.
-		if (!SerpensBot.deleteCommandMessages.containsKey(guildID))
-			SerpensBot.loadSettings(guildID);
-		
-		SerpensBot.deleteCommandMessages.put(guildID, value);
-	}
-	
-	/**
-	 * Get the flag for deleting message after an unlisted command sent in the given guild.
-	 *
-	 * @param guildID
-	 * 		The id of the guild.
-	 *
-	 * @return
-	 * 		True if the bot should delete unlisted command messages, false otherwise.
-	 */
-	public static boolean getDeleteCommandMessages(String guildID)
-	{
-		//If key is not found the settings are not loaded or are not created.
-		if (!SerpensBot.deleteCommandMessages.containsKey(guildID))
-		{
-			SerpensBot.loadSettings(guildID);
-		}
-		
-		return SerpensBot.deleteCommandMessages.get(guildID);
 	}
 }

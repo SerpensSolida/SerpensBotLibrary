@@ -24,7 +24,6 @@ public class BaseListener extends BotListener
 		
 		//Module has no tasks and cannot get help.
 		this.getBotCommands().clear();
-		this.getUnlistedBotCommands().clear();
 	}
 	
 	@Override
@@ -54,15 +53,18 @@ public class BaseListener extends BotListener
 			return;
 		
 		//Parse special commands.
-		if ("!!reset symbol".equals(message))
-			this.resetCommandSymbol(guild, channel, author);
-		else if ("!!reset prefixes".equals(message))
+		if ("!!reset prefixes".equals(message))
 			this.resetPrefixes(guild, channel, author);
 	}
 	
 	@Override
 	public void onSlashCommand(@Nonnull SlashCommandEvent event)
 	{
+		Guild guild = event.getGuild();
+		
+		if (guild == null)
+			return;
+		
 		if (!"help".equals(event.getName()))
 			return;
 		
@@ -79,28 +81,6 @@ public class BaseListener extends BotListener
 	public boolean canBeDisabled()
 	{
 		return false;
-	}
-	
-	/**
-	 * Reset the command symbol, if something bad happens while setting command symbol this will reset it to default.
-	 */
-	private void resetCommandSymbol(Guild guild, MessageChannel channel, User author)
-	{
-		Member authorMember = guild.retrieveMember(author).complete();
-		
-		//Check in the user has permission to run this command.
-		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
-		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("base_command_symbol_title"), author, SerpensBot.getMessage("base_command_symbol_permission_error"));
-			channel.sendMessage(message).queue();
-			return;
-		}
-		
-		SerpensBot.setCommandSymbol(guild.getId(), "/");
-		SerpensBot.saveSettings(guild.getId());
-		
-		Message message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("base_command_symbol_title"), author, SerpensBot.getMessage("base_command_symbol_info"));
-		channel.sendMessage(message).queue();
 	}
 	
 	/**
@@ -152,7 +132,7 @@ public class BaseListener extends BotListener
 			
 			//Add listener to the list.
 			builderList.append(SerpensBot.getMessage("base_command_help_command_field_value", listener.getModuleName()) + "\n");
-			builderCommands.append("`" + SerpensBot.getCommandSymbol(guildID) + modulePrefix + " help`\n");
+			builderCommands.append("`/" + modulePrefix + " help`\n");
 		}
 		
 		embedBuilder.addField(SerpensBot.getMessage("base_command_help_command_field_title"), builderList.toString(), true);

@@ -24,7 +24,6 @@ public class LoggerListener extends BotListener
 		this.setModuleName("Logger");
 		
 		//Clear all commands.
-		this.getUnlistedBotCommands().clear();
 		this.getBotCommands().clear();
 	}
 	
