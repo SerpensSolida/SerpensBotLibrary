@@ -79,8 +79,8 @@ public class SerpensBot
 			return;
 		}
 		
-		api.addEventListener(new BaseListener());
 		api.addEventListener(new SettingsListener());
+		api.addEventListener(new BaseListener());
 		api.addEventListener(new LoggerListener());
 		
 		if (data.getOwner() == null || data.getOwner().isBlank())
@@ -316,20 +316,24 @@ public class SerpensBot
 	 * @param guildID
 	 * 		The id of the guild.
 	 */
-	public static void loadSettings(String guildID)
+	public static boolean loadSettings(String guildID)
 	{
 		File settingsFile = new File(Paths.get("server_data", guildID, SerpensBot.SETTINGS_FOLDER, "settings.json").toString());
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Guild guild = SerpensBot.api.getGuildById(guildID);
 		
 		if (guild == null)
-			return;
+			return false;
 		
 		logger.info(SerpensBot.getMessage("loading_guild_settings", guild.getName()));
 		
 		try (BufferedReader reader = new BufferedReader(new FileReader(settingsFile)))
 		{
 			SettingsData settingsData = gson.fromJson(reader, SettingsData.class);
+			
+			//Check if the data was read correctly.
+			if (settingsData == null)
+				return false;
 			
 			HashMap<String, String> modulePrefixes = settingsData.getModulePrefixes();
 			HashMap<String, Boolean> moduleStates = settingsData.getModuleStates();
@@ -359,8 +363,10 @@ public class SerpensBot
 		catch (IOException e)
 		{
 			logger.error(e.getLocalizedMessage(), e);
+			return false;
 		}
 		
+		return true;
 	}
 	
 	/**

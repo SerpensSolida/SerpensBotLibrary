@@ -56,16 +56,21 @@ public class SettingsListener extends BotListener
 	{
 		String guildID = event.getGuild().getId();
 		
+		//Check if guild has not been loaded.
 		if (!this.loadedGuilds.contains(guildID))
 		{
-			SerpensBot.loadSettings(guildID);
-			this.loadedGuilds.add(guildID);
+			//Load guild settings.
+			boolean loaded = SerpensBot.loadSettings(guildID);
+			
+			//If settings were correctly loaded add guild to the loaded set.
+			if (loaded)
+				this.loadedGuilds.add(guildID);
 		}
 	}
 	
 	private void modulePrefixCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
 	{
-		String guildID = guild.getId();;
+		String guildID = guild.getId();
 		OptionMapping moduleID = event.getOption("module_id"); //Module id passed to the command.
 		OptionMapping modulePrefix = event.getOption("new_prefix"); //Module prefix passed to the command.
 		

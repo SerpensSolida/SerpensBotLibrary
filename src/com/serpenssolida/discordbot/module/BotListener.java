@@ -231,8 +231,8 @@ public class BotListener extends ListenerAdapter
 		{
 			SerpensBot.loadSettings(guildID); //Try loading the settings.
 			
-			if (!this.modulePrefix.containsKey(guildID)) //Settings for this guild not found.
-				this.modulePrefix.put(guildID, this.internalID);
+			//Put the default value if no key was loaded from file.
+			this.modulePrefix.putIfAbsent(guildID, this.internalID);
 		}
 		
 		return this.modulePrefix.get(guildID);
@@ -250,8 +250,8 @@ public class BotListener extends ListenerAdapter
 	 */
 	public String getModulePrefixOrDefault(String guildID)
 	{
-		if (!this.modulePrefix.containsKey(guildID))
-			this.modulePrefix.put(guildID, this.internalID);
+		//Put the default value if no key was loaded from file.
+		this.modulePrefix.putIfAbsent(guildID, this.internalID);
 		
 		return this.modulePrefix.get(guildID);
 	}
@@ -270,8 +270,8 @@ public class BotListener extends ListenerAdapter
 		{
 			SerpensBot.loadSettings(guildID); //Try loading the settings.
 			
-			if (!this.enabled.containsKey(guildID)) //Settings for this guild not found.
-				this.enabled.put(guildID, true);
+			//Put the default value if no key was loaded from file.
+			this.enabled.putIfAbsent(guildID, true);
 		}
 		
 		//Enable/disable the module.
@@ -293,8 +293,8 @@ public class BotListener extends ListenerAdapter
 		{
 			SerpensBot.loadSettings(guildID); //Try loading the settings.
 			
-			if (!this.enabled.containsKey(guildID)) //Settings for this guild not found.
-				this.enabled.put(guildID, true);
+			//Put the default value if no key was loaded from file.
+			this.enabled.putIfAbsent(guildID, true);
 		}
 		
 		return this.enabled.get(guildID);
@@ -312,8 +312,8 @@ public class BotListener extends ListenerAdapter
 	 */
 	public boolean isEnabledOrDefault(String guildID)
 	{
-		if (!this.enabled.containsKey(guildID))
-			this.enabled.put(guildID, true);
+		//Put the default value if no key was loaded from file.
+		this.enabled.putIfAbsent(guildID, true);
 		
 		return this.enabled.get(guildID);
 	}
@@ -326,9 +326,7 @@ public class BotListener extends ListenerAdapter
 	public void addBotCommand(BotCommand command)
 	{
 		if (command != null)
-		{
 			this.botCommands.put(command.getId(), command);
-		}
 	}
 	
 	public void removeBotCommand(String id)
