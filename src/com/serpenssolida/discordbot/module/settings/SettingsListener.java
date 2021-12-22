@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -52,6 +53,42 @@ public class SettingsListener extends BotListener
 	}
 	
 	@Override
+	public void onMessageReceived(@NotNull MessageReceivedEvent event)
+	{
+		String guildID = event.getGuild().getId();
+		
+		//Check if guild has not been loaded.
+		if (!this.loadedGuilds.contains(guildID))
+		{
+			//Load guild settings.
+			boolean loaded = SerpensBot.loadSettings(guildID);
+			
+			//If settings were correctly loaded add guild to the loaded set.
+			if (loaded)
+				this.loadedGuilds.add(guildID);
+		}
+	}
+	
+	@Override
+	public void onSlashCommand(@NotNull SlashCommandEvent event)
+	{
+		String guildID = event.getGuild().getId();
+		
+		//Check if guild has not been loaded.
+		if (!this.loadedGuilds.contains(guildID))
+		{
+			//Load guild settings.
+			boolean loaded = SerpensBot.loadSettings(guildID);
+			
+			//If settings were correctly loaded add guild to the loaded set.
+			if (loaded)
+				this.loadedGuilds.add(guildID);
+			System.out.println("fine onSlash");
+		}
+		
+	}
+	
+	@Override
 	public void onGenericGuild(@NotNull GenericGuildEvent event)
 	{
 		String guildID = event.getGuild().getId();
@@ -66,6 +103,7 @@ public class SettingsListener extends BotListener
 			if (loaded)
 				this.loadedGuilds.add(guildID);
 		}
+		
 	}
 	
 	private void modulePrefixCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
