@@ -7,8 +7,10 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +70,28 @@ public class LoggerListener extends BotListener
 		
 		//Log the event.
 		logger.info("[REACTION ADDED][{}][#{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getMessageId(), messageReaction.getReactionEmote().getName());
+	}
+	
+	@Override
+	public void onSlashCommand(@NotNull SlashCommandEvent event)
+	{
+		//Don't accept messages from private channels.
+		if (!event.isFromGuild())
+			return;
+		
+		Guild guild = event.getGuild();
+		User author = event.getUser(); //Author of the message.
+		MessageChannel channel = event.getChannel(); //Channel where the message was sent.
+		
+		//If the author of the message is the bot, ignore the message.
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
+			return;
+		
+		if (guild == null)
+			return;
+		
+		//Log the event.
+		logger.info("[SLASH COMMAND][{}][#{}][{}] {}", guild.getName(), channel.getName(), author.getName(), "/"+ event.getName());
 	}
 	
 	@Override
