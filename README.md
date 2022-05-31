@@ -48,7 +48,7 @@ public class PingPongListener extends BotListener
     
     //The bot is based on this lib: https://github.com/DV8FromTheWorld/JDA
     //See its javadoc on how to use these parameters. 
-    public void pongCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
+    public void pongCommand(SlashCommandInteractionEvent event, Guild guild, MessageChannel channel, User author)
     {
         //Reply to the event
         event.reply("Pong!").setEphemeral(false).queue();

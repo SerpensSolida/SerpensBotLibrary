@@ -1,7 +1,7 @@
 package com.serpenssolida.discordbot.interaction;
 
 import com.serpenssolida.discordbot.SerpensBot;
-import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

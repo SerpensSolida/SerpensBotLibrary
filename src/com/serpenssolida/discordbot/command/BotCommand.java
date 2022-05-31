@@ -1,7 +1,7 @@
 package com.serpenssolida.discordbot.command;
 
 import com.serpenssolida.discordbot.SerpensBot;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +80,7 @@ public class BotCommand
 	 * 		The event being performed.
 	 *
 	 */
-	public void doAction(SlashCommandEvent event)
+	public void doAction(SlashCommandInteractionEvent event)
 	{
 		if (this.action != null)
 		{

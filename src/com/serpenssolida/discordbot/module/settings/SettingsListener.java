@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -68,9 +68,9 @@ public class SettingsListener extends BotListener
 				this.loadedGuilds.add(guildID);
 		}
 	}
-	
+
 	@Override
-	public void onSlashCommand(@NotNull SlashCommandEvent event)
+	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event)
 	{
 		String guildID = event.getGuild().getId();
 		
@@ -106,7 +106,7 @@ public class SettingsListener extends BotListener
 		
 	}
 	
-	private void modulePrefixCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
+	private void modulePrefixCommand(SlashCommandInteractionEvent event, Guild guild, MessageChannel channel, User author)
 	{
 		String guildID = guild.getId();
 		OptionMapping moduleID = event.getOption("module_id"); //Module id passed to the command.
@@ -207,7 +207,7 @@ public class SettingsListener extends BotListener
 		event.reply(messageBuilder.build()).setEphemeral(false).queue();
 	}
 	
-	private void moduleStateCommand(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
+	private void moduleStateCommand(SlashCommandInteractionEvent event, Guild guild, MessageChannel channel, User author)
 	{
 		Member authorMember = guild.retrieveMember(author).complete();
 		String guildID = guild.getId();

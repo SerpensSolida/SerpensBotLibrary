@@ -6,8 +6,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ public class LoggerListener extends BotListener
 	}
 	
 	@Override
-	public void onSlashCommand(@NotNull SlashCommandEvent event)
+	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event)
 	{
 		//Don't accept messages from private channels.
 		if (!event.isFromGuild())

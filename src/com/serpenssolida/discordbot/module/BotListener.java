@@ -12,13 +12,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +49,9 @@ public class BotListener extends ListenerAdapter
 				.addOption(OptionType.STRING, "command-name", SerpensBot.getMessage("botlistener_command_help_param1"), false);
 		this.addBotCommand(command);
 	}
-	
+
 	@Override
-	public void onSlashCommand(@Nonnull SlashCommandEvent event)
+	public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event)
 	{
 		Guild guild = event.getGuild();
 		
@@ -153,7 +154,7 @@ public class BotListener extends ListenerAdapter
 		if (this.getModulePrefix(guild.getId()).isEmpty())
 			return commandList;
 		
-		CommandData mainCommand = new CommandData(this.getModulePrefix(guild.getId()) , "Main module command");
+		CommandDataImpl mainCommand = new CommandDataImpl(this.getModulePrefix(guild.getId()), "Main module command");
 		for (BotCommand botCommand : this.botCommands.values())
 		{
 			mainCommand.addSubcommands(botCommand.getSubcommand());
@@ -166,7 +167,7 @@ public class BotListener extends ListenerAdapter
 	/**
 	 * Method for the "help" command of a module. Sends the module listed and unlisted command list.
 	 */
-	private void sendHelp(SlashCommandEvent event, Guild guild, MessageChannel channel, User author)
+	private void sendHelp(SlashCommandInteractionEvent event, Guild guild, MessageChannel channel, User author)
 	{
 		OptionMapping commandName = event.getOption("command-name");
 		

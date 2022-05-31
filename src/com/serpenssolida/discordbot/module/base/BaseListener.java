@@ -1,15 +1,16 @@
 package com.serpenssolida.discordbot.module.base;
 
-import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.MessageUtils;
+import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -30,7 +31,7 @@ public class BaseListener extends BotListener
 	public ArrayList<CommandData> generateCommands(Guild guild)
 	{
 		ArrayList<CommandData> commandList = new ArrayList<>();
-		CommandData mainCommand = new CommandData("help" , SerpensBot.getMessage("base_command_help_description"));
+		CommandData mainCommand = Commands.slash("help" , SerpensBot.getMessage("base_command_help_description"));
 		
 		commandList.add(mainCommand);
 		return commandList;
@@ -58,7 +59,7 @@ public class BaseListener extends BotListener
 	}
 	
 	@Override
-	public void onSlashCommand(@Nonnull SlashCommandEvent event)
+	public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event)
 	{
 		Guild guild = event.getGuild();
 		
@@ -111,7 +112,7 @@ public class BaseListener extends BotListener
 	/**
 	 * Send a message containing all help commands of the modules.
 	 */
-	private void sendModuleHelp(SlashCommandEvent event, Guild guild, User author)
+	private void sendModuleHelp(SlashCommandInteractionEvent event, Guild guild, User author)
 	{
 		String guildID = guild.getId();
 		MessageBuilder messageBuilder = new MessageBuilder();

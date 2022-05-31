@@ -3,7 +3,7 @@ package com.serpenssolida.discordbot.command;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
  * Used by {@link BotCommand} as callback when the command is used in a chat.
@@ -23,5 +23,5 @@ public interface BotCommandAction
 	 * 		Author that sent the command.
 	 *
 	 */
-	void doAction(SlashCommandEvent event, Guild guild, MessageChannel channel, User author);
+	void doAction(SlashCommandInteractionEvent event, Guild guild, MessageChannel channel, User author);
 }

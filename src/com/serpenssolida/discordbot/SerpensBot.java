@@ -315,6 +315,9 @@ public class SerpensBot
 	 *
 	 * @param guildID
 	 * 		The id of the guild.
+	 *
+	 * @return
+	 * 		-True if the settings were loaded, false otherwise.
 	 */
 	public static boolean loadSettings(String guildID)
 	{
