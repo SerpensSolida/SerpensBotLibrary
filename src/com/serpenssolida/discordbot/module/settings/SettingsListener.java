@@ -83,7 +83,6 @@ public class SettingsListener extends BotListener
 			//If settings were correctly loaded add guild to the loaded set.
 			if (loaded)
 				this.loadedGuilds.add(guildID);
-			System.out.println("fine onSlash");
 		}
 		
 	}

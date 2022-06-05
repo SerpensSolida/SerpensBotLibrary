@@ -6,12 +6,14 @@ import com.serpenssolida.discordbot.command.BotCommand;
 import com.serpenssolida.discordbot.interaction.InteractionCallback;
 import com.serpenssolida.discordbot.interaction.InteractionGroup;
 import com.serpenssolida.discordbot.interaction.WrongInteractionEventException;
+import com.serpenssolida.discordbot.modal.ModalCallback;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -20,6 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,7 @@ public class BotListener extends ListenerAdapter
 	private final HashMap<String, Boolean> enabled = new HashMap<>(); //Whether the module is enabled or not.
 	private final LinkedHashMap<String, BotCommand> botCommands = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
 	private final HashMap<String, HashMap<String, InteractionGroup>> activeGlobalInteractions = new HashMap<>();
+	private final HashMap<String, HashMap<String, ModalCallback>> activeModalCallbacks = new HashMap<>();
 	
 	private static Logger logger = LoggerFactory.getLogger(BotListener.class);
 	
@@ -124,6 +128,43 @@ public class BotListener extends ListenerAdapter
 			
 			//Log the error.
 			logger.error(e.getLocalizedMessage(), e);
+		}
+		catch (PermissionException e)
+		{
+			//Send error message.
+			String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
+			String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
+			Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+			event.reply(message).setEphemeral(true).queue();
+			
+			//Log the error.
+			logger.error(e.getLocalizedMessage(), e);
+		}
+	}
+	
+	@Override
+	public void onModalInteraction(@NotNull ModalInteractionEvent event)
+	{
+		//String modalId = event.getModalId();
+		User author = event.getUser(); //The user that added the reaction.
+		Guild guild = event.getGuild(); //The user that added the reaction.
+		MessageChannel channel = event.getMessageChannel();
+		
+		//If this event is not from a guild ignore it.
+		if (guild == null)
+			return;
+		
+		//Ignore bot reaction.
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
+			return;
+		
+		ModalCallback modalCallback = this.getModalCallback(guild.getId(), author.getId());
+
+		if (modalCallback == null)
+			return;
+		try
+		{
+			modalCallback.doAction(event, guild, channel, author);
 		}
 		catch (PermissionException e)
 		{
@@ -371,5 +412,23 @@ public class BotListener extends ListenerAdapter
 	public HashMap<String, BotCommand> getBotCommands()
 	{
 		return this.botCommands;
+	}
+	
+	public void addModalCallback(String guildID, String userID, ModalCallback modalCallback)
+	{
+		HashMap<String, ModalCallback> guildActiveModals = this.activeModalCallbacks.computeIfAbsent(guildID, k -> new HashMap<>());
+		guildActiveModals.put(userID, modalCallback);
+	}
+	
+	public ModalCallback getModalCallback(String guildID, String userID)
+	{
+		HashMap<String, ModalCallback> guildActiveModals = this.activeModalCallbacks.computeIfAbsent(guildID, k -> new HashMap<>());
+		return guildActiveModals.get(userID);
+	}
+	
+	public void removeModalCallback(String guildID, String messageId)
+	{
+		HashMap<String, ModalCallback> guildActiveModals = this.activeModalCallbacks.computeIfAbsent(guildID, k -> new HashMap<>());
+		guildActiveModals.remove(messageId);
 	}
 }

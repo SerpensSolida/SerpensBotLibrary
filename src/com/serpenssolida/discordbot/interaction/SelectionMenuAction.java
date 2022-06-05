@@ -18,7 +18,7 @@ public interface SelectionMenuAction extends InteractionAction
 	default boolean doAction(GenericComponentInteractionCreateEvent event, Guild guild, MessageChannel channel, Message message, User author) throws WrongInteractionEventException
 	{
 		if (event instanceof SelectMenuInteractionEvent)
-			return this.doAction(event, guild, channel, message, author);
+			return this.doAction((SelectMenuInteractionEvent) event, guild, channel, message, author);
 		
 		throw new WrongInteractionEventException(event.getComponentId(), event.getClass(), SelectMenuInteractionEvent.class);
 	}

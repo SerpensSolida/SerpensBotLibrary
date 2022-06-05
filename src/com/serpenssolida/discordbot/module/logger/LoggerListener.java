@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -113,6 +114,27 @@ public class LoggerListener extends BotListener
 		//Log the event.
 		String messageId = event.getMessage().getId();
 		logger.info("[INTERACTION][{}][#{}][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getComponentType(), messageId, componendId);
+	}
+	
+	@Override
+	public void onModalInteraction(@NotNull ModalInteractionEvent event)
+	{
+		//Don't accept messages from private channels.
+		if (!event.isFromGuild())
+			return;
+		
+		Guild guild = event.getGuild();
+		User author = event.getUser(); //Author of the message.
+		
+		//If the author of the message is the bot, ignore the message.
+		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
+			return;
+		
+		if (guild == null)
+			return;
+		
+		//Log the event.
+		logger.info("[MODAL INTERACTION][{}][{}] {}", guild.getName(), author.getName(), "/"+ event.getModalId());
 	}
 	
 	@Override

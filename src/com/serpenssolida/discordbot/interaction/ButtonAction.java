@@ -18,7 +18,7 @@ public interface ButtonAction extends InteractionAction
 	default boolean doAction(GenericComponentInteractionCreateEvent event, Guild guild, MessageChannel channel, Message message, User author) throws WrongInteractionEventException
 	{
 		if (event instanceof ButtonInteractionEvent)
-			return this.doAction(event, guild, channel, message, author);
+			return this.doAction((ButtonInteractionEvent) event, guild, channel, message, author);
 		
 		throw new WrongInteractionEventException(event.getComponentId(), event.getClass(), ButtonInteractionEvent.class);
 	}
