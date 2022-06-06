@@ -381,22 +381,30 @@ public class BotListener extends ListenerAdapter
 		return this.botCommands.get(id);
 	}
 	
-	public void addInteractionGroup(String guildID, String messageId, InteractionGroup interactionGroup)
+	public void addInteractionGroup(String guildID, String messageID, InteractionGroup interactionGroup)
 	{
 		HashMap<String, InteractionGroup> guildInteractionGroup = this.activeGlobalInteractions.computeIfAbsent(guildID, k -> new HashMap<>());
-		guildInteractionGroup.put(messageId, interactionGroup);
+		guildInteractionGroup.put(messageID, interactionGroup);
 	}
 	
-	public InteractionGroup getInteractionGroup(String guildID, String messageId)
+	public InteractionGroup getInteractionGroup(String guildID, String messageID)
 	{
 		HashMap<String, InteractionGroup> guildInteractionGroup = this.activeGlobalInteractions.computeIfAbsent(guildID, k -> new HashMap<>());
-		return guildInteractionGroup.get(messageId);
+		return guildInteractionGroup.get(messageID);
 	}
 	
-	public void removeInteractionGroup(String guildID, String messageId)
+	public void removeInteractionGroup(String guildID, String messageID)
 	{
 		HashMap<String, InteractionGroup> guildInteractionGroup = this.activeGlobalInteractions.computeIfAbsent(guildID, k -> new HashMap<>());
-		guildInteractionGroup.remove(messageId);
+		guildInteractionGroup.remove(messageID);
+	}
+	
+	public void switchInteractionGroupMessage(String guildID, String messageID, String newMessageID)
+	{
+		HashMap<String, InteractionGroup> guildInteractionGroup = this.activeGlobalInteractions.computeIfAbsent(guildID, k -> new HashMap<>());
+		InteractionGroup interactionGroup = guildInteractionGroup.remove(messageID);
+		
+		this.addInteractionGroup(guildID, newMessageID, interactionGroup);
 	}
 	
 	public String getModuleName()
@@ -426,9 +434,9 @@ public class BotListener extends ListenerAdapter
 		return guildActiveModals.get(userID);
 	}
 	
-	public void removeModalCallback(String guildID, String messageId)
+	public void removeModalCallback(String guildID, String messageID)
 	{
 		HashMap<String, ModalCallback> guildActiveModals = this.activeModalCallbacks.computeIfAbsent(guildID, k -> new HashMap<>());
-		guildActiveModals.remove(messageId);
+		guildActiveModals.remove(messageID);
 	}
 }
