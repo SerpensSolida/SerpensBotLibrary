@@ -132,7 +132,7 @@ public class BaseListener extends BotListener
 				continue;
 			
 			//Add listener to the list.
-			builderList.append(SerpensBot.getMessage("base_command_help_command_field_value", listener.getModuleName()) + "\n");
+			builderList.append("`•`" + SerpensBot.getMessage("base_command_help_command_field_value", listener.getModuleName()) + "\n");
 			builderCommands.append("`/" + modulePrefix + " help`\n");
 		}
 		
