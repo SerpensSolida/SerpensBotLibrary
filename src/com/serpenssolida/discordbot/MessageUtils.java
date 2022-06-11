@@ -83,6 +83,50 @@ public class MessageUtils
 	}
 	
 	/**
+	 * Method used to generate simple embed messages.
+	 *
+	 * @param title
+	 * 		Title of the embed.
+	 * @param description
+	 * 		String showed as description of the embed.
+	 * @param color Color of the embed.
+	 *
+	 * @return
+	 * 		The message containing the generated embed.
+	 */
+	public static Message buildSimpleMessage(String title, String description, Color color)
+	{
+		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title);
+		embedBuilder.setDescription(description);
+		embedBuilder.setColor(color);
+		MessageBuilder messageBuilder = new MessageBuilder();
+		messageBuilder.setEmbeds(embedBuilder.build());
+		
+		return messageBuilder.build();
+	}
+	
+	/**
+	 * Method used to generate simple embed messages.
+	 *
+	 * @param title
+	 * 		Title of the embed.
+	 * @param description
+	 * 		String showed as description of the embed.
+	 *
+	 * @return
+	 * 		The message containing the generated embed.
+	 */
+	public static Message buildSimpleMessage(String title, String description)
+	{
+		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title);
+		embedBuilder.setDescription(description);
+		MessageBuilder messageBuilder = new MessageBuilder();
+		messageBuilder.setEmbeds(embedBuilder.build());
+		
+		return messageBuilder.build();
+	}
+	
+	/**
 	 * Create an {@link EmbedBuilder} with standard content for ease of use.
 	 *
 	 * @param title

@@ -46,10 +46,7 @@ public class UserUtils
 		if (member == null)
 			return false;
 		
-		if (member.isOwner())
-			return true;
-		
-		return UserUtils.canMemberManageServer(member);
+		return member.isOwner() || UserUtils.canMemberManageServer(member);
 	}
 	
 	/**
