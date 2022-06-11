@@ -62,7 +62,7 @@ public class UserUtils
 	 * 		-True if the user has administration permission.
 	 * 		-False if the user has not administration permission.
 	 */
-	private static boolean canMemberManageServer(Member member)
+	public static boolean canMemberManageServer(Member member)
 	{
 		for (Role role : member.getRoles())
 		{
