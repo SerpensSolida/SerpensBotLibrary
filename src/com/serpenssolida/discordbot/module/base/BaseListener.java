@@ -2,6 +2,7 @@ package com.serpenssolida.discordbot.module.base;
 
 import com.serpenssolida.discordbot.MessageUtils;
 import com.serpenssolida.discordbot.SerpensBot;
+import com.serpenssolida.discordbot.UserUtils;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -92,7 +93,7 @@ public class BaseListener extends BotListener
 		Member authorMember = guild.retrieveMember(author).complete();
 		
 		//Check in the user has permission to run this command.
-		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
+		if (!UserUtils.hasMemberAdminPermissions(authorMember))
 		{
 			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("base_command_reset_prefix_title"), author, SerpensBot.getMessage("base_command_reset_prefix_permission_error"));
 			channel.sendMessage(message).queue();

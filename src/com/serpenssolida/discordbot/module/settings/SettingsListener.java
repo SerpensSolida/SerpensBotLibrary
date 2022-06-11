@@ -2,6 +2,7 @@ package com.serpenssolida.discordbot.module.settings;
 
 import com.serpenssolida.discordbot.MessageUtils;
 import com.serpenssolida.discordbot.SerpensBot;
+import com.serpenssolida.discordbot.UserUtils;
 import com.serpenssolida.discordbot.command.BotCommand;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -155,7 +156,7 @@ public class SettingsListener extends BotListener
 			String newPrefix = modulePrefix.getAsString();
 			
 			//Check in the user has permission to run this command.
-			if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
+			if (!UserUtils.hasMemberAdminPermissions(authorMember))
 			{
 				Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_permission_error"));
 				event.reply(message).setEphemeral(true).queue();
@@ -216,7 +217,7 @@ public class SettingsListener extends BotListener
 		OptionMapping stateArg = event.getOption("enabled");
 		
 		//Check in the user has permission to run this command.
-		if (!SerpensBot.isAdmin(authorMember) && !authorMember.isOwner())
+		if (!UserUtils.hasMemberAdminPermissions(authorMember) && !authorMember.isOwner())
 		{
 			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_permission_error"));
 			event.reply(message).setEphemeral(true).queue();

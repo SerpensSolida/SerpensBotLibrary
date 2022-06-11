@@ -9,10 +9,7 @@ import com.serpenssolida.discordbot.module.settings.SettingsData;
 import com.serpenssolida.discordbot.module.settings.SettingsListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -25,7 +22,10 @@ import javax.security.auth.login.LoginException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 public class SerpensBot
 {
@@ -156,52 +156,6 @@ public class SerpensBot
 	}
 	
 	/**
-	 * Search multiple users by the given name.
-	 *
-	 * @param guild
-	 * 		The guild from where to search from.
-	 * @param userName
-	 * 		The username of the users to search for.
-	 *
-	 * @return
-	 * 		An ArrayList that contains all the users that match the query.
-	 */
-	public static ArrayList<Member> findUsersByName(Guild guild, String userName)
-	{
-		HashSet<Member> users = new HashSet<>();
-		
-		users.addAll(guild.getMembersByName(userName, true));
-		users.addAll(guild.getMembersByNickname(userName, true));
-		
-		return new ArrayList<>(users);
-	}
-	
-	/**
-	 * Check if the user has administration permission.
-	 *
-	 * @param member
-	 * 		The user to check.
-	 *
-	 * @return
-	 * 		-True if the user has administration permission.
-	 * 		-False if the user has not administration permission.
-	 */
-	public static boolean isAdmin(Member member)
-	{
-		if (member == null) return false;
-		
-		for (Role role : member.getRoles())
-		{
-			if (role.hasPermission(Permission.MANAGE_SERVER))
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
 	 * Load the bot data from file.
 	 *
 	 * @return
@@ -248,10 +202,9 @@ public class SerpensBot
 		}
 		catch (IOException e)
 		{
-			ResourceBundle language = SerpensBot.defaultLanguage;
 			logger.info(language.getString("loaded_resource_bundle_default"));
 			
-			return language;
+			return SerpensBot.defaultLanguage;
 		}
 	}
 	
