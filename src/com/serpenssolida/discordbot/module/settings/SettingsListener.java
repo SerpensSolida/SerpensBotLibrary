@@ -56,6 +56,10 @@ public class SettingsListener extends BotListener
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
 	{
+		//Check if the event is from a guild.
+		if (!event.isFromGuild())
+			return;
+		
 		String guildID = event.getGuild().getId();
 		
 		//Check if guild has not been loaded.
