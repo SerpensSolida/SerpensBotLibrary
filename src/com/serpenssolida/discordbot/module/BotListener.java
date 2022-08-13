@@ -65,9 +65,6 @@ public class BotListener extends ListenerAdapter
 		if (!event.getName().equals(this.getModulePrefix(guild.getId())))
 			return;
 		
-		//Log the event.
-		logger.info("[SLASH COMMAND][{}][#{}][{}] {}", guild.getName(), event.getChannel().getName(), event.getUser().getName(), event.getCommandPath());
-		
 		try
 		{
 			//Get the command from the list using the event command name and run it.
@@ -116,7 +113,10 @@ public class BotListener extends ListenerAdapter
 			
 			//Delete message that has the clicked button if it should be deleted.
 			if (deleteMessage)
+			{
+				this.removeInteractionGroup(guild.getId(), event.getMessageId());
 				event.getHook().deleteOriginal().queue();
+			}
 		}
 		catch (WrongInteractionEventException e)
 		{
@@ -145,7 +145,6 @@ public class BotListener extends ListenerAdapter
 	@Override
 	public void onModalInteraction(@NotNull ModalInteractionEvent event)
 	{
-		//String modalId = event.getModalId();
 		User author = event.getUser(); //The user that added the reaction.
 		Guild guild = event.getGuild(); //The user that added the reaction.
 		MessageChannel channel = event.getMessageChannel();
@@ -162,9 +161,11 @@ public class BotListener extends ListenerAdapter
 
 		if (modalCallback == null)
 			return;
+		
 		try
 		{
 			modalCallback.doAction(event, guild, channel, author);
+			this.removeModalCallback(guild.getId(), author.getId());
 		}
 		catch (PermissionException e)
 		{
@@ -434,9 +435,9 @@ public class BotListener extends ListenerAdapter
 		return guildActiveModals.get(userID);
 	}
 	
-	public void removeModalCallback(String guildID, String messageID)
+	public void removeModalCallback(String guildID, String userID)
 	{
 		HashMap<String, ModalCallback> guildActiveModals = this.activeModalCallbacks.computeIfAbsent(guildID, k -> new HashMap<>());
-		guildActiveModals.remove(messageID);
+		guildActiveModals.remove(userID);
 	}
 }

@@ -70,7 +70,7 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Log the event.
-		logger.info("[REACTION ADDED][{}][#{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getMessageId(), messageReaction.getReactionEmote().getName());
+		logger.info("[REACTION ADDED][{}][#{}][{}][{}] {}", guild.getName(), channel.getName(), event.getMessageId(), author.getName(), messageReaction.getReactionEmote().getName());
 	}
 	
 	@Override
@@ -92,7 +92,7 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Log the event.
-		logger.info("[SLASH COMMAND][{}][#{}][{}] {}", guild.getName(), channel.getName(), author.getName(), "/"+ event.getName());
+		logger.info("[SLASH COMMAND][{}][#{}][{}] {}", guild.getName(), channel.getName(), author.getName(), "/"+ event.getCommandPath());
 	}
 	
 	@Override
@@ -113,7 +113,7 @@ public class LoggerListener extends BotListener
 		
 		//Log the event.
 		String messageID = event.getMessage().getId();
-		logger.info("[INTERACTION][{}][#{}][{}][{}][{}] {}", guild.getName(), channel.getName(), author.getName(), event.getComponentType(), messageID, componendId);
+		logger.info("[INTERACTION][{}][#{}][{}][{}][{}] {}", guild.getName(), channel.getName(), event.getComponentType(), messageID, author.getName(), componendId);
 	}
 	
 	@Override
