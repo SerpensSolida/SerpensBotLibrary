@@ -90,6 +90,7 @@ public class SettingsListener extends BotListener
 				this.loadedGuilds.add(guildID);
 		}
 		
+		super.onSlashCommandInteraction(event);
 	}
 	
 	@Override
