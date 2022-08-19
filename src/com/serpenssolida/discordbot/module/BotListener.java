@@ -41,7 +41,7 @@ public class BotListener extends ListenerAdapter
 	private final HashMap<String, HashMap<String, InteractionGroup>> activeGlobalInteractions = new HashMap<>();
 	private final HashMap<String, HashMap<String, ModalCallback>> activeModalCallbacks = new HashMap<>();
 	
-	private static Logger logger = LoggerFactory.getLogger(BotListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(BotListener.class);
 	
 	public BotListener(String modulePrefix)
 	{

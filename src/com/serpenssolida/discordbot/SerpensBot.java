@@ -7,6 +7,7 @@ import com.serpenssolida.discordbot.module.base.BaseListener;
 import com.serpenssolida.discordbot.module.logger.LoggerListener;
 import com.serpenssolida.discordbot.module.settings.SettingsData;
 import com.serpenssolida.discordbot.module.settings.SettingsListener;
+import com.serpenssolida.discordbot.webserver.SerpensBotWebServer;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -33,6 +34,7 @@ public class SerpensBot
 	public static final ResourceBundle defaultLanguage = ResourceBundle.getBundle("SerpensBot");
 	
 	private static JDA api;
+	private static SerpensBotInitCallback initCallback;
 	private static ResourceBundle language;
 	private static String ownerId;
 	
@@ -42,7 +44,7 @@ public class SerpensBot
 	
 	public static void start()
 	{
-		//Load language
+		//Load language.
 		SerpensBot.language = loadLanguage();
 		
 		//Load data from file.
@@ -92,7 +94,12 @@ public class SerpensBot
 		//Set the owner of the bot.
 		SerpensBot.ownerId = data.getOwner();
 		
+		if (SerpensBot.initCallback != null)
+				SerpensBot.initCallback.onInit();
+		
 		logger.info(SerpensBot.getMessage("bot_ready"));
+		
+		SerpensBotWebServer.start(data.getApiPort(), data.getApiPassword());
 	}
 	
 	/**
@@ -101,6 +108,11 @@ public class SerpensBot
 	public static JDA getApi()
 	{
 		return api;
+	}
+	
+	public static void setOnInitCallback(SerpensBotInitCallback callback)
+	{
+		SerpensBot.initCallback = callback;
 	}
 	
 	/**
