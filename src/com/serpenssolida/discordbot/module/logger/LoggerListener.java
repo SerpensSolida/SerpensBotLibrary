@@ -3,9 +3,9 @@ package com.serpenssolida.discordbot.module.logger;
 import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
@@ -70,7 +70,7 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Log the event.
-		logger.info("[REACTION ADDED][{}][#{}][{}][{}] {}", guild.getName(), channel.getName(), event.getMessageId(), author.getName(), messageReaction.getReactionEmote().getName());
+		logger.info("[REACTION ADDED][{}][#{}][{}][{}] {}", guild.getName(), channel.getName(), event.getMessageId(), author.getName(), messageReaction.getEmoji().getName());
 	}
 	
 	@Override

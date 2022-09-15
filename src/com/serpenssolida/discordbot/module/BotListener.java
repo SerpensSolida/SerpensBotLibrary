@@ -10,11 +10,10 @@ import com.serpenssolida.discordbot.interaction.InteractionGroup;
 import com.serpenssolida.discordbot.interaction.WrongInteractionEventException;
 import com.serpenssolida.discordbot.modal.ModalCallback;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -25,6 +24,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class BotListener extends ListenerAdapter
 		catch (PermissionException e)
 		{
 			//Send error message.
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
@@ -129,7 +130,7 @@ public class BotListener extends ListenerAdapter
 			//Send error message.
 			String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
 			String embedDescription = SerpensBot.getMessage("botlistener_interaction_event_type_error", e.getInteractionId(), e.getExpected(), e.getFound());
-			Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+			MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
@@ -140,7 +141,7 @@ public class BotListener extends ListenerAdapter
 			//Send error message.
 			String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
 			String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
-			Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+			MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
@@ -176,7 +177,7 @@ public class BotListener extends ListenerAdapter
 			//Send error message.
 			String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
 			String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
-			Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+			MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
@@ -198,7 +199,7 @@ public class BotListener extends ListenerAdapter
 		catch (PermissionException e)
 		{
 			//Send error message.
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
@@ -218,7 +219,7 @@ public class BotListener extends ListenerAdapter
 		catch (PermissionException e)
 		{
 			//Send error message.
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
@@ -298,7 +299,7 @@ public class BotListener extends ListenerAdapter
 			}
 		}
 		
-		event.reply(new MessageBuilder().setEmbeds(embedBuilder.build()).build()).setEphemeral(false).queue();
+		event.reply(new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build()).setEphemeral(false).queue();
 	}
 	
 	/**

@@ -5,13 +5,17 @@ import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.UserUtils;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -95,7 +99,7 @@ public class BaseListener extends BotListener
 		//Check in the user has permission to run this command.
 		if (!UserUtils.hasMemberAdminPermissions(authorMember))
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("base_command_reset_prefix_title"), author, SerpensBot.getMessage("base_command_reset_prefix_permission_error"));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("base_command_reset_prefix_title"), author, SerpensBot.getMessage("base_command_reset_prefix_permission_error"));
 			channel.sendMessage(message).queue();
 			return;
 		}
@@ -106,7 +110,7 @@ public class BaseListener extends BotListener
 		SerpensBot.updateGuildCommands(guild);
 		SerpensBot.saveSettings(guild.getId());
 		
-		Message message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("base_command_reset_prefix_title"), author, SerpensBot.getMessage("base_command_reset_prefix_info"));
+		MessageCreateData message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("base_command_reset_prefix_title"), author, SerpensBot.getMessage("base_command_reset_prefix_info"));
 		channel.sendMessage(message).queue();
 	}
 	
@@ -116,7 +120,7 @@ public class BaseListener extends BotListener
 	private void sendModuleHelp(SlashCommandInteractionEvent event, Guild guild, User author)
 	{
 		String guildID = guild.getId();
-		MessageBuilder messageBuilder = new MessageBuilder();
+		MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
 		
 		StringBuilder builderList = new StringBuilder();
 		StringBuilder builderCommands = new StringBuilder();

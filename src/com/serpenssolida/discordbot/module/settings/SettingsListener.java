@@ -6,14 +6,18 @@ import com.serpenssolida.discordbot.UserUtils;
 import com.serpenssolida.discordbot.command.BotCommand;
 import com.serpenssolida.discordbot.module.BotListener;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -118,7 +122,7 @@ public class SettingsListener extends BotListener
 		OptionMapping modulePrefix = event.getOption("new_prefix"); //Module prefix passed to the command.
 		
 		Member authorMember = guild.retrieveMember(author).complete(); //Member that sent the command.
-		MessageBuilder messageBuilder = new MessageBuilder();
+		MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
 		
 		String embedTitle = SerpensBot.getMessage("settings_command_prefix_title");
 		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(embedTitle, author);
@@ -147,7 +151,7 @@ public class SettingsListener extends BotListener
 			//Print the result.
 			if (listener == null)
 			{
-				Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_module_not_found_error", moduleID));
+				MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_module_not_found_error", moduleID));
 				event.reply(message).setEphemeral(true).queue();
 				return;
 			}
@@ -163,7 +167,7 @@ public class SettingsListener extends BotListener
 			//Check in the user has permission to run this command.
 			if (!UserUtils.hasMemberAdminPermissions(authorMember))
 			{
-				Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_permission_error"));
+				MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_permission_error"));
 				event.reply(message).setEphemeral(true).queue();
 				return;
 			}
@@ -171,14 +175,14 @@ public class SettingsListener extends BotListener
 			//Check if the module prefix to set is suitable.
 			if (!newPrefix.chars().allMatch(Character::isLetterOrDigit) || newPrefix.length() > 16)
 			{
-				Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_command_prefix_edit_format_error"));
+				MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_command_prefix_edit_format_error"));
 				event.reply(message).setEphemeral(true).queue();
 				return;
 			}
 			
 			if (listener == null)
 			{
-				Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_module_not_found_error", moduleID));
+				MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_module_not_found_error", moduleID));
 				event.reply(message).setEphemeral(true).queue();
 				return;
 			}
@@ -188,7 +192,7 @@ public class SettingsListener extends BotListener
 			{
 				if (newPrefix.equals(module.getModulePrefix(guildID)))
 				{
-					Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_module_prefix_not_unique_error", newPrefix));
+					MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_module_prefix_not_unique_error", newPrefix));
 					event.reply(message).setEphemeral(true).queue();
 					return;
 				}
@@ -203,7 +207,7 @@ public class SettingsListener extends BotListener
 		}
 		else
 		{
-			Message message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_command_prefix_missing_argument_error"));
+			MessageCreateData message = MessageUtils.buildErrorMessage(embedTitle, author, SerpensBot.getMessage("settings_command_prefix_missing_argument_error"));
 			event.reply(message).setEphemeral(true).queue();
 			return;
 		}
@@ -224,14 +228,14 @@ public class SettingsListener extends BotListener
 		//Check in the user has permission to run this command.
 		if (!UserUtils.hasMemberAdminPermissions(authorMember) && !authorMember.isOwner())
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_permission_error"));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_permission_error"));
 			event.reply(message).setEphemeral(true).queue();
 			return;
 		}
 		
 		if (moduleNameArg == null || stateArg == null)
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_command_deletecommand_missing_value_error"));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_command_deletecommand_missing_value_error"));
 			event.reply(message).setEphemeral(true).queue();
 			return;
 		}
@@ -244,7 +248,7 @@ public class SettingsListener extends BotListener
 		//Print the result.
 		if (listener == null)
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_module_not_found_error", moduleID));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_module_not_found_error", moduleID));
 			event.reply(message).setEphemeral(true).queue();
 			return;
 		}
@@ -252,7 +256,7 @@ public class SettingsListener extends BotListener
 		//Check if module can be deactivated.
 		if (!listener.canBeDisabled())
 		{
-			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_module_undeactivatable_error", moduleID));
+			MessageCreateData message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author, SerpensBot.getMessage("settings_module_undeactivatable_error", moduleID));
 			event.reply(message).setEphemeral(true).queue();
 			return;
 		}
@@ -263,7 +267,7 @@ public class SettingsListener extends BotListener
 		SerpensBot.saveSettings(guildID);
 		
 		String description = SerpensBot.getMessage(enabled ? "settings_command_modulestate_enabled_info" : "settings_command_modulestate_disabled_info", moduleID);
-		Message message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author,  description);
+		MessageCreateData message = MessageUtils.buildSimpleMessage(SerpensBot.getMessage("settings_command_modulestate_title"), author,  description);
 		event.reply(message).setEphemeral(false).queue(); //Set ephemeral if the user didn't put the argument.
 	}
 }

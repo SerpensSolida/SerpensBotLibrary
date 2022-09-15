@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.LoginException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -68,11 +67,6 @@ public class SerpensBot
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
 					.build();
 			SerpensBot.api.awaitReady();
-		}
-		catch (LoginException e)
-		{
-			logger.error(SerpensBot.getMessage("login_error"), e);
-			return;
 		}
 		catch (InterruptedException e)
 		{

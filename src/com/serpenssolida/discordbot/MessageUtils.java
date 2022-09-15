@@ -1,9 +1,9 @@
 package com.serpenssolida.discordbot;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.awt.*;
 
@@ -23,13 +23,13 @@ public class MessageUtils
 	 *
 	 * @return The message containing the generated embed.
 	 */
-	public static Message buildErrorMessage(String title, User author, String description)
+	public static MessageCreateData buildErrorMessage(String title, User author, String description)
 	{
 		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title, author);
 		embedBuilder.setDescription(description);
 		embedBuilder.setThumbnail("https://i.imgur.com/N5QySPm.png[/img]");
 		embedBuilder.setColor(Color.RED);
-		MessageBuilder messageBuilder = new MessageBuilder();
+		MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
 		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		return messageBuilder.build();
@@ -47,11 +47,11 @@ public class MessageUtils
 	 *
 	 * @return The message containing the generated embed.
 	 */
-	public static Message buildSimpleMessage(String title, User author, String description)
+	public static MessageCreateData buildSimpleMessage(String title, User author, String description)
 	{
 		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title, author);
 		embedBuilder.setDescription(description);
-		MessageBuilder messageBuilder = new MessageBuilder();
+		MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
 		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		return messageBuilder.build();
@@ -71,12 +71,12 @@ public class MessageUtils
 	 * @return
 	 * 		The message containing the generated embed.
 	 */
-	public static Message buildSimpleMessage(String title, User author, String description, Color color)
+	public static MessageCreateData buildSimpleMessage(String title, User author, String description, Color color)
 	{
 		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title, author);
 		embedBuilder.setDescription(description);
 		embedBuilder.setColor(color);
-		MessageBuilder messageBuilder = new MessageBuilder();
+		MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
 		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		return messageBuilder.build();
@@ -94,12 +94,12 @@ public class MessageUtils
 	 * @return
 	 * 		The message containing the generated embed.
 	 */
-	public static Message buildSimpleMessage(String title, String description, Color color)
+	public static MessageCreateData buildSimpleMessage(String title, String description, Color color)
 	{
 		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title);
 		embedBuilder.setDescription(description);
 		embedBuilder.setColor(color);
-		MessageBuilder messageBuilder = new MessageBuilder();
+		MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
 		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		return messageBuilder.build();
@@ -116,11 +116,11 @@ public class MessageUtils
 	 * @return
 	 * 		The message containing the generated embed.
 	 */
-	public static Message buildSimpleMessage(String title, String description)
+	public static MessageCreateData buildSimpleMessage(String title, String description)
 	{
 		EmbedBuilder embedBuilder = MessageUtils.getDefaultEmbed(title);
 		embedBuilder.setDescription(description);
-		MessageBuilder messageBuilder = new MessageBuilder();
+		MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
 		messageBuilder.setEmbeds(embedBuilder.build());
 		
 		return messageBuilder.build();
