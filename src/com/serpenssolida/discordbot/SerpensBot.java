@@ -161,6 +161,8 @@ public class SerpensBot
 				
 				for (CommandData commandData : listener.generateCommands(guild))
 					commands.addCommands(commandData);
+				
+				commands.addCommands(listener.generateContextMenuOptions());
 			}
 		}
 		

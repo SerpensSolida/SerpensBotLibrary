@@ -3,6 +3,8 @@ package com.serpenssolida.discordbot.module;
 import com.serpenssolida.discordbot.MessageUtils;
 import com.serpenssolida.discordbot.SerpensBot;
 import com.serpenssolida.discordbot.command.BotCommand;
+import com.serpenssolida.discordbot.contextmenu.MessageContextMenuOption;
+import com.serpenssolida.discordbot.contextmenu.UserContextMenuOption;
 import com.serpenssolida.discordbot.interaction.InteractionCallback;
 import com.serpenssolida.discordbot.interaction.InteractionGroup;
 import com.serpenssolida.discordbot.interaction.WrongInteractionEventException;
@@ -14,7 +16,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -38,6 +42,8 @@ public class BotListener extends ListenerAdapter
 	private final HashMap<String, String> modulePrefix = new HashMap<>(); //Prefix of the module, used for commands.
 	private final HashMap<String, Boolean> enabled = new HashMap<>(); //Whether the module is enabled or not.
 	private final LinkedHashMap<String, BotCommand> botCommands = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
+	private final LinkedHashMap<String, MessageContextMenuOption> messageContextMenuOption = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
+	private final LinkedHashMap<String, UserContextMenuOption> userContextMenuOption = new LinkedHashMap<>(); //List of commands of the module that are displayed in the client command list.
 	private final HashMap<String, HashMap<String, InteractionGroup>> activeGlobalInteractions = new HashMap<>();
 	private final HashMap<String, HashMap<String, ModalCallback>> activeModalCallbacks = new HashMap<>();
 	
@@ -153,10 +159,7 @@ public class BotListener extends ListenerAdapter
 		if (guild == null)
 			return;
 		
-		//Ignore bot reaction.
-		if (SerpensBot.getApi().getSelfUser().getId().equals(author.getId()))
-			return;
-		
+		//Get the modal callback.
 		ModalCallback modalCallback = this.getModalCallback(guild.getId(), author.getId());
 
 		if (modalCallback == null)
@@ -164,6 +167,7 @@ public class BotListener extends ListenerAdapter
 		
 		try
 		{
+			//Execute modal action.
 			modalCallback.doAction(event, guild, channel, author);
 			this.removeModalCallback(guild.getId(), author.getId());
 		}
@@ -173,6 +177,48 @@ public class BotListener extends ListenerAdapter
 			String embedTitle = SerpensBot.getMessage("botlistener_button_action_error");
 			String embedDescription = SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission());
 			Message message = MessageUtils.buildErrorMessage(embedTitle, event.getUser(), embedDescription);
+			event.reply(message).setEphemeral(true).queue();
+			
+			//Log the error.
+			logger.error(e.getLocalizedMessage(), e);
+		}
+	}
+	
+	@Override
+	public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event)
+	{
+		try
+		{
+			//Get the ContextMenuAction and execute it.
+			MessageContextMenuOption option = this.getMessageContextMenuOption(event.getName());
+			
+			if (option != null)
+				option.doAction(event);
+		}
+		catch (PermissionException e)
+		{
+			//Send error message.
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
+			event.reply(message).setEphemeral(true).queue();
+			
+			//Log the error.
+			logger.error(e.getLocalizedMessage(), e);
+		}
+	}
+	
+	@Override
+	public void onUserContextInteraction(@NotNull UserContextInteractionEvent event)
+	{
+		try
+		{
+			//Get the ContextMenuAction and execute it.
+			UserContextMenuOption option = this.getUserContextMenuOption(event.getName());
+			option.doAction(event);
+		}
+		catch (PermissionException e)
+		{
+			//Send error message.
+			Message message = MessageUtils.buildErrorMessage(SerpensBot.getMessage("botlistener_command_error"), event.getUser(), SerpensBot.getMessage("botlistener_missing_permmision_error", e.getPermission()));
 			event.reply(message).setEphemeral(true).queue();
 			
 			//Log the error.
@@ -197,12 +243,30 @@ public class BotListener extends ListenerAdapter
 			return commandList;
 		
 		CommandDataImpl mainCommand = new CommandDataImpl(this.getModulePrefix(guild.getId()), "Main module command");
+		
 		for (BotCommand botCommand : this.botCommands.values())
-		{
 			mainCommand.addSubcommands(botCommand.getSubcommand());
-		}
 		
 		commandList.add(mainCommand);
+		return commandList;
+	}
+	
+	/**
+	 * Generate a list of context menus.
+	 *
+	 * @return
+	 * 		An ArrayList of commands.
+	 */
+	public ArrayList<CommandData> generateContextMenuOptions()
+	{
+		ArrayList<CommandData> commandList = new ArrayList<>();
+		
+		for (UserContextMenuOption option : this.userContextMenuOption.values())
+			commandList.add(option.getContextMenu());
+		
+		for (MessageContextMenuOption option : this.messageContextMenuOption.values())
+			commandList.add(option.getContextMenu());
+
 		return commandList;
 	}
 	
@@ -380,6 +444,40 @@ public class BotListener extends ListenerAdapter
 	public BotCommand getBotCommand(String id)
 	{
 		return this.botCommands.get(id);
+	}
+	
+	public void addMessageContextMenuOption(MessageContextMenuOption messageContextMenuOption)
+	{
+		if (messageContextMenuOption != null)
+			this.messageContextMenuOption.put(messageContextMenuOption.getId(), messageContextMenuOption);
+		
+	}
+	
+	public void removeMessageContextMenuOption(String id)
+	{
+		this.messageContextMenuOption.remove(id);
+	}
+	
+	public MessageContextMenuOption getMessageContextMenuOption(String id)
+	{
+		return this.messageContextMenuOption.get(id);
+	}
+	
+	public void addUserContextMenuOption(UserContextMenuOption userContextMenuOption)
+	{
+		if (userContextMenuOption != null)
+			this.userContextMenuOption.put(userContextMenuOption.getId(), userContextMenuOption);
+		
+	}
+	
+	public void removeUserContextMenuOption(String id)
+	{
+		this.userContextMenuOption.remove(id);
+	}
+	
+	public UserContextMenuOption getUserContextMenuOption(String id)
+	{
+		return this.userContextMenuOption.get(id);
 	}
 	
 	public void addInteractionGroup(String guildID, String messageID, InteractionGroup interactionGroup)
