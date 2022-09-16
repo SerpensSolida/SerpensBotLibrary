@@ -30,7 +30,7 @@ public class AvatarCache
 		try
 		{
 			AvatarData data = loadCache();
-			Avatar avatar = data.getAvatars().get(user.getAvatarId());
+			Avatar avatar = data.getAvatars().get(AvatarCache.getEffectiveAvatarId(user));
 			
 			if (avatar != null)
 			{
@@ -50,10 +50,8 @@ public class AvatarCache
 	
 	private static BufferedImage downloadAvatar(User user) throws IOException
 	{
-		if (user.getAvatarUrl() == null) return null;
-		
-		URL url = new URL(user.getAvatarUrl());
-		File file = new File("avatar_cache/" + user.getAvatarId() + ".png");
+		URL url = new URL(user.getEffectiveAvatarUrl());
+		File file = new File("avatar_cache/" + AvatarCache.getEffectiveAvatarId(user) + ".png");
 		
 		BufferedImage bufferedAvatar = ImageIO.read(url);
 		
@@ -67,8 +65,9 @@ public class AvatarCache
 		
 		ImageIO.write(bufferedAvatar, "png", file);
 		
-		Avatar avatar = new Avatar(user.getId(), user.getAvatarId(), user.getAvatarUrl(), file.getPath());
-		data.getAvatars().put(user.getAvatarId(), avatar);
+		Avatar avatar = new Avatar(AvatarCache.getEffectiveAvatarId(user), user.getEffectiveAvatarUrl(), file.getPath());
+		
+		data.getAvatars().put(AvatarCache.getEffectiveAvatarId(user), avatar);
 		AvatarCache.saveCache(data);
 		
 		return bufferedAvatar;
@@ -91,9 +90,7 @@ public class AvatarCache
 		AvatarData data = gson.fromJson(reader, AvatarData.class);
 		
 		if (data == null)
-		{
 			data = new AvatarData();
-		}
 		
 		return data;
 	}
@@ -106,7 +103,6 @@ public class AvatarCache
 		try (PrintWriter writer = new PrintWriter(new FileWriter(file)))
 		{
 			writer.write(gson.toJson(data));
-			
 		}
 		catch (FileNotFoundException e)
 		{
@@ -114,5 +110,12 @@ public class AvatarCache
 			if (file.createNewFile())
 				saveCache(data);
 		}
+	}
+	
+	private static String getEffectiveAvatarId(User user)
+	{
+		String avatarId = user.getAvatarId();
+		
+		return avatarId == null ? user.getDefaultAvatarId() : avatarId;
 	}
 }
