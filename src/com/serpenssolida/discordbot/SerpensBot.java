@@ -61,7 +61,7 @@ public class SerpensBot
 					.createDefault(data.getToken())
 					.setChunkingFilter(ChunkingFilter.ALL)
 					.setMemberCachePolicy(MemberCachePolicy.ALL)
-					.enableIntents(GatewayIntent.GUILD_MEMBERS)
+					.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
 					.build();
 			SerpensBot.api.awaitReady();
 		}
