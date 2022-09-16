@@ -7,9 +7,12 @@ import net.dv8tion.jda.api.entities.Role;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class UserUtils
 {
+	private UserUtils(){}
+	
 	/**
 	 * Search multiple users by the given name.
 	 *
@@ -21,7 +24,7 @@ public class UserUtils
 	 * @return
 	 * 		An ArrayList that contains all the users that match the query.
 	 */
-	public static ArrayList<Member> findUsersByName(Guild guild, String userName)
+	public static List<Member> findUsersByName(Guild guild, String userName)
 	{
 		HashSet<Member> users = new HashSet<>();
 		

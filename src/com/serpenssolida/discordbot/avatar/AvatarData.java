@@ -1,12 +1,13 @@
 package com.serpenssolida.discordbot.avatar;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class AvatarData
 {
-	private final HashMap<String, Avatar> avatars = new HashMap<>();
+	private final Map<String, Avatar> avatars = new HashMap<>();
 	
-	public HashMap<String, Avatar> getAvatars()
+	public Map<String, Avatar> getAvatars()
 	{
 		return this.avatars;
 	}

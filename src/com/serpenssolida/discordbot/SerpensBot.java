@@ -22,10 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class SerpensBot
 {
@@ -146,10 +143,8 @@ public class SerpensBot
 		CommandListUpdateAction commands = guild.updateCommands();
 		for (Object registeredListener : SerpensBot.api.getRegisteredListeners())
 		{
-			if (registeredListener instanceof BotListener)
+			if (registeredListener instanceof BotListener listener)
 			{
-				BotListener listener = (BotListener) registeredListener;
-				
 				if (!listener.isEnabledOrDefault(guild.getId()))
 					return;
 				
@@ -234,16 +229,14 @@ public class SerpensBot
 	/**
 	 * @return The list of modules of the bot.
 	 */
-	public static ArrayList<BotListener> getModules()
+	public static List<BotListener> getModules()
 	{
 		ArrayList<BotListener> modules = new ArrayList<>();
 		
 		for (Object registeredListener : SerpensBot.api.getRegisteredListeners())
 		{
-			if (registeredListener instanceof BotListener)
-			{
-				modules.add((BotListener) registeredListener);
-			}
+			if (registeredListener instanceof BotListener listener)
+				modules.add(listener);
 		}
 		
 		return modules;
@@ -299,8 +292,8 @@ public class SerpensBot
 			if (settingsData == null)
 				return false;
 			
-			HashMap<String, String> modulePrefixes = settingsData.getModulePrefixes();
-			HashMap<String, Boolean> moduleStates = settingsData.getModuleStates();
+			Map<String, String> modulePrefixes = settingsData.getModulePrefixes();
+			Map<String, Boolean> moduleStates = settingsData.getModuleStates();
 			
 			for (BotListener listener : SerpensBot.getModules())
 			{

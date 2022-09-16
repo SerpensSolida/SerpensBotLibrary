@@ -12,7 +12,7 @@ public class UserContextMenuOption
 	private final CommandData contextMenu;
 	private UserContextMenuAction action;
 	
-	private static final Logger logger = LoggerFactory.getLogger(MessageContextMenuOption.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserContextMenuOption.class);
 	
 	public UserContextMenuOption(String id)
 	{

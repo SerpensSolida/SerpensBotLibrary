@@ -25,7 +25,7 @@ public class SerpensBotWebServer
 {
 	private static String password = "";
 	private static boolean running = false;
-	private static HashSet<UUID> tokens = new HashSet<>();
+	private static Set<UUID> tokens = new HashSet<>();
 	
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	private static final Logger logger = LoggerFactory.getLogger(SerpensBotWebServer.class);
@@ -193,7 +193,7 @@ public class SerpensBotWebServer
 		List<ListenerAdapter> modules = SerpensBot.getApi()
 				.getRegisteredListeners()
 				.stream()
-				.map(element -> (ListenerAdapter) element)
+				.map(ListenerAdapter.class::cast)
 				.toList();
 		modules.forEach(listenerAdapter -> SerpensBot.getApi().removeEventListener(listenerAdapter));
 		SerpensBot.getApi().shutdown();

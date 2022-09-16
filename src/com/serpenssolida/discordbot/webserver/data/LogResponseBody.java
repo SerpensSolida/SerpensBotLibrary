@@ -1,19 +1,19 @@
 package com.serpenssolida.discordbot.webserver.data;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public final class LogResponseBody
 {
-	private final ArrayList<String> lines;
+	private final List<String> lines;
 	private final String updateDate;
 	
-	public LogResponseBody(ArrayList<String> lines, String updateDate)
+	public LogResponseBody(List<String> lines, String updateDate)
 	{
 		this.lines = lines;
 		this.updateDate = updateDate;
 	}
 	
-	public ArrayList<String> getLines()
+	public List<String> getLines()
 	{
 		return this.lines;
 	}

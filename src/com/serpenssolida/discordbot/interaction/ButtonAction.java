@@ -17,8 +17,8 @@ public interface ButtonAction extends InteractionAction
 	@Override
 	default boolean doAction(GenericComponentInteractionCreateEvent event, Guild guild, MessageChannel channel, Message message, User author) throws WrongInteractionEventException
 	{
-		if (event instanceof ButtonInteractionEvent)
-			return this.doAction((ButtonInteractionEvent) event, guild, channel, message, author);
+		if (event instanceof ButtonInteractionEvent buttonEvent)
+			return this.doAction(buttonEvent, guild, channel, message, author);
 		
 		throw new WrongInteractionEventException(event.getComponentId(), event.getClass(), ButtonInteractionEvent.class);
 	}

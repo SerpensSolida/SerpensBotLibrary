@@ -11,7 +11,6 @@ import com.serpenssolida.discordbot.interaction.WrongInteractionEventException;
 import com.serpenssolida.discordbot.modal.ModalCallback;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -32,9 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class BotListener extends ListenerAdapter
 {
@@ -236,7 +233,7 @@ public class BotListener extends ListenerAdapter
 	 * @return
 	 * 		An ArrayList of commands.
 	 */
-	public ArrayList<CommandData> generateCommands(Guild guild)
+	public List<CommandData> generateCommands(Guild guild)
 	{
 		ArrayList<CommandData> commandList = new ArrayList<>();
 		
@@ -258,7 +255,7 @@ public class BotListener extends ListenerAdapter
 	 * @return
 	 * 		An ArrayList of commands.
 	 */
-	public ArrayList<CommandData> generateContextMenuOptions()
+	public List<CommandData> generateContextMenuOptions()
 	{
 		ArrayList<CommandData> commandList = new ArrayList<>();
 		
@@ -517,7 +514,7 @@ public class BotListener extends ListenerAdapter
 		this.moduleName = moduleName;
 	}
 	
-	public HashMap<String, BotCommand> getBotCommands()
+	public Map<String, BotCommand> getBotCommands()
 	{
 		return this.botCommands;
 	}

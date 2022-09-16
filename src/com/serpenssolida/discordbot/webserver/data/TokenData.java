@@ -1,18 +1,18 @@
 package com.serpenssolida.discordbot.webserver.data;
 
-import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class TokenData
 {
-	private final HashSet<UUID> tokens;
+	private final Set<UUID> tokens;
 	
-	public TokenData(HashSet<UUID> tokens)
+	public TokenData(Set<UUID> tokens)
 	{
 		this.tokens = tokens;
 	}
 	
-	public HashSet<UUID> getTokens()
+	public Set<UUID> getTokens()
 	{
 		return tokens;
 	}
