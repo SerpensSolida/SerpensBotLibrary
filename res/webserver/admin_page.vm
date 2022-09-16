@@ -215,7 +215,9 @@
 
                 const data = await response.json();
                 lastLogUpdate = data.updateDate;
-                appendLog(data);
+
+				if (data.lines.length > 0)
+                    appendLog(data);
 
                 startLogAutoUpdate();
             }
@@ -232,7 +234,11 @@
 
             data.lines.forEach(line => logString += line + "\n");
             logArea.val(logString);
-            logArea.scrollTop(logArea[0].scrollHeight - 20);
+
+			const scrollCheckbox = $("#checkbox-scroll")
+
+            if (scrollCheckbox.prop("checked"))
+                logArea.scrollTop(logArea[0].scrollHeight);
         }
 
         function startLogAutoUpdate()
@@ -285,17 +291,21 @@
         </div>
         <div class="row align-items-center mt-5">
             <div class="col">
-                <div class="accordion" id="log-accordion">
+                <div class="accordion" id="log-accordion" style="--bs-accordion-border-color: #000">
                     <div class="accordion-item bg-white bg-opacity-10 border-0">
                         <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button bg-white bg-opacity-10 text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <button class="accordion-button text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 SerpensBot Log
                             </button>
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                            <div class="accordion-body bg-white bg-opacity-25">
+                            <div class="accordion-body bd-dark">
+                                <input class="form-check-input" type="checkbox" value="" id="checkbox-scroll" checked>
+                                <label class="form-check-label bg-transparent text-bg-dark" for="checkbox-scroll" style="margin-bottom: 10px;">
+                                    Auto-scroll to the bottom
+                                </label>
                                 <label for="log-area"></label>
-                                <textarea id="log-area" class="bg-dark font-monospace" wrap="off" rows="10" cols="5000" style="box-sizing:border-box; width:100%; padding: 5px;" disabled></textarea>
+                                <textarea id="log-area" class="bg-dark font-monospace" wrap="off" rows="10" cols="5000" style="width:100%; padding: 5px; border-style:hidden" disabled></textarea>
                             </div>
                         </div>
                     </div>
