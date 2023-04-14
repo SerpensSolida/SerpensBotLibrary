@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-
 public class LoggerListener extends BotListener
 {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerListener.class);
@@ -31,7 +29,7 @@ public class LoggerListener extends BotListener
 	}
 	
 	@Override
-	public void onMessageReceived(@Nonnull MessageReceivedEvent event)
+	public void onMessageReceived(MessageReceivedEvent event)
 	{
 		//Don't accept messages from private channels.
 		if (!event.isFromGuild())
@@ -51,7 +49,7 @@ public class LoggerListener extends BotListener
 	}
 	
 	@Override
-	public void onMessageReactionAdd(@Nonnull MessageReactionAddEvent event)
+	public void onMessageReactionAdd(MessageReactionAddEvent event)
 	{
 		//Don't accept reaction from private channels.
 		if (!event.isFromGuild())
@@ -92,11 +90,11 @@ public class LoggerListener extends BotListener
 			return;
 		
 		//Log the event.
-		logger.info("[SLASH COMMAND][{}][#{}][{}] {}", guild.getName(), channel.getName(), author.getName(), "/"+ event.getCommandPath());
+		logger.info("[SLASH COMMAND][{}][#{}][{}] {}", guild.getName(), channel.getName(), author.getName(), "/"+ event.getCommandIdLong());
 	}
 	
 	@Override
-	public void onGenericComponentInteractionCreate(@Nonnull GenericComponentInteractionCreateEvent event)
+	public void onGenericComponentInteractionCreate(GenericComponentInteractionCreateEvent event)
 	{
 		String componendId = event.getComponentId();
 		User author = event.getUser(); //The user that added the reaction.

@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 public class BotListener extends ListenerAdapter
@@ -59,7 +58,7 @@ public class BotListener extends ListenerAdapter
 	}
 
 	@Override
-	public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event)
+	public void onSlashCommandInteraction(SlashCommandInteractionEvent event)
 	{
 		Guild guild = event.getGuild();
 		
@@ -87,7 +86,7 @@ public class BotListener extends ListenerAdapter
 	}
 	
 	@Override
-	public void onGenericComponentInteractionCreate(@Nonnull GenericComponentInteractionCreateEvent event)
+	public void onGenericComponentInteractionCreate(GenericComponentInteractionCreateEvent event)
 	{
 		String componendId = event.getComponentId();
 		User author = event.getUser(); //The user that added the reaction.

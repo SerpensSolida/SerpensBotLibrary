@@ -17,8 +17,6 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 public class BaseListener extends BotListener
@@ -43,7 +41,7 @@ public class BaseListener extends BotListener
 	}
 	
 	@Override
-	public void onMessageReceived(@Nonnull MessageReceivedEvent event)
+	public void onMessageReceived(MessageReceivedEvent event)
 	{
 		//Don't accept messages from private channels.
 		if (!event.isFromGuild())
@@ -64,7 +62,7 @@ public class BaseListener extends BotListener
 	}
 	
 	@Override
-	public void onSlashCommandInteraction(@Nonnull SlashCommandInteractionEvent event)
+	public void onSlashCommandInteraction(SlashCommandInteractionEvent event)
 	{
 		Guild guild = event.getGuild();
 		
