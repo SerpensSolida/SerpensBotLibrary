@@ -52,7 +52,7 @@ public class BotListener extends ListenerAdapter
 		
 		BotCommand command = new BotCommand("help", SerpensBot.getMessage("botlistener_command_help_desc"));
 		command.setAction(this::sendHelp);
-		command.getSubcommand()
+		command.getCommandData()
 				.addOption(OptionType.STRING, "command-name", SerpensBot.getMessage("botlistener_command_help_param1"), false);
 		this.addBotCommand(command);
 	}
@@ -242,7 +242,7 @@ public class BotListener extends ListenerAdapter
 		CommandDataImpl mainCommand = new CommandDataImpl(this.getModulePrefix(guild.getId()), "Main module command");
 		
 		for (BotCommand botCommand : this.botCommands.values())
-			mainCommand.addSubcommands(botCommand.getSubcommand());
+			mainCommand.addSubcommands(botCommand.getCommandData());
 		
 		commandList.add(mainCommand);
 		return commandList;
@@ -287,8 +287,8 @@ public class BotListener extends ListenerAdapter
 				for (BotCommand command : this.botCommands.values())
 				{
 					commandField
-							.append("`/" + this.getModulePrefix(guild.getId()) + " " + command.getSubcommand().getName() + "`")
-							.append(" " + command.getSubcommand().getDescription() + "\n");
+							.append("`/" + this.getModulePrefix(guild.getId()) + " " + command.getCommandData().getName() + "`")
+							.append(" " + command.getCommandData().getDescription() + "\n");
 				}
 				
 				embedBuilder.addField(SerpensBot.getMessage("botlistener_command_help_listed_commands"), commandField.toString(), false);

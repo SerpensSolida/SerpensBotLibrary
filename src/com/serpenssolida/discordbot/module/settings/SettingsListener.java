@@ -34,7 +34,7 @@ public class SettingsListener extends BotListener
 		//Command for changing the module prefix of a module.
 		BotCommand command = new BotCommand("prefix", SerpensBot.getMessage("settings_command_prefix_desc"));
 		command.setAction(this::modulePrefixCommand);
-		command.getSubcommand()
+		command.getCommandData()
 				.addOptions(new OptionData(OptionType.STRING, "module_id", SerpensBot.getMessage("settings_command_prefix_param1"), false))
 				.addOption(OptionType.STRING, "new_prefix", SerpensBot.getMessage("settings_command_prefix_param2"), false);
 		this.addBotCommand(command);
@@ -42,7 +42,7 @@ public class SettingsListener extends BotListener
 		//Command for enabling or disabling a module.
 		command = new BotCommand("modulestate", SerpensBot.getMessage("settings_command_modulestate_desc"));
 		command.setAction(this::moduleStateCommand);
-		command.getSubcommand()
+		command.getCommandData()
 				.addOptions(new OptionData(OptionType.STRING, "module_id", SerpensBot.getMessage("settings_command_prefix_param1"), true))
 				.addOptions(new OptionData(OptionType.BOOLEAN, "enabled", "settings_command_modulestate_param1", true));
 		this.addBotCommand(command);

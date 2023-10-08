@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class BotCommand
 {
 	private String id; //ID of the command, used to identify unequivocally a command.
-	private SubcommandData subcommand; //The subcommand used by this BotCommand.
+	private SubcommandData commandData; //The subcommand used by this BotCommand.
 	private BotCommandAction action; //Callback that is called when the command is sent to the chat.
 	
 	private static Logger logger = LoggerFactory.getLogger(BotCommand.class);
@@ -55,7 +55,7 @@ public class BotCommand
 	public BotCommand(String id, String description)
 	{
 		this.id = id;
-		this.subcommand = new SubcommandData(this.id, description);
+		this.commandData = new SubcommandData(this.id, description);
 		this.action = null;
 	}
 	
@@ -107,8 +107,8 @@ public class BotCommand
 	 * @return
 	 * 		The subcommand that this BotCommand wraps.
 	 */
-	public SubcommandData getSubcommand()
+	public SubcommandData getCommandData()
 	{
-		return this.subcommand;
+		return this.commandData;
 	}
 }
