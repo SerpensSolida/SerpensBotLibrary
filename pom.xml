@@ -80,7 +80,7 @@
     <distributionManagement>
         <repository>
             <id>serpensbot-library</id>
-            <url>https://maven.fmistri.it</url>
+            <url>http://ddns.serpenssolida.com:3035/releases</url>
         </repository>
     </distributionManagement>
 
