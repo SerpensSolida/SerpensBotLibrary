@@ -13,7 +13,7 @@ To import the library you can use Maven. Firstly add the maven repository:
     <repository>
         <id>serpenssolida</id>
         <name>serpensbot-library</name>
-        <url>http://ddns.serpenssolida.com:3035</url>
+        <url>http://ddns.serpenssolida.com:3035/releases</url>
     </repository>
 </repositories>
 ```
